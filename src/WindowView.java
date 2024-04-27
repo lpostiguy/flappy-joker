@@ -1,5 +1,7 @@
 import javafx.animation.AnimationTimer;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -11,9 +13,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyCode;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,15 +35,16 @@ public class WindowView extends Application {
     // Arraylist containing all the heroes
     private ArrayList<Character> heroes = new ArrayList<>();
     private long lastHeroTime = 0;
+    private BorderPane root;
+    private Stage primaryStage;
 
+    private Stage gameOverStage;
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 
     @Override
     public void start(Stage primaryStage) {
-        BorderPane root = new BorderPane();
+        this.primaryStage = primaryStage;  // Initialize primaryStage here
+        root = new BorderPane();  // Initialize root here
 
         Scene scene = new Scene(root, 640, 440);
         primaryStage.setTitle("Flappy Enemy");
@@ -56,7 +62,8 @@ public class WindowView extends Application {
         HBox bottomGameInfo = new HBox();
         bottomGameInfo.setPadding(new Insets(10, 0, 10, 0));
         bottomGameInfo.setPrefWidth(scene.getWidth());
-        BackgroundFill backgroundFill = new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY);
+        BackgroundFill backgroundFill = new BackgroundFill(Color.WHITE,
+                CornerRadii.EMPTY, Insets.EMPTY);
         bottomGameInfo.setBackground(new Background(backgroundFill));
 
         Button pauseButton = new Button("Pause");
@@ -79,16 +86,41 @@ public class WindowView extends Application {
         coinText.setFont(Font.font("Arial", 16));
         coinText.setPadding(new Insets(0, 10, 0, 10));
 
-        bottomGameInfo.getChildren().addAll(buttonBox, new Separator(Orientation.VERTICAL), lifeText, new Separator(Orientation.VERTICAL), coinText);
+        bottomGameInfo.getChildren().addAll(buttonBox,
+                new Separator(Orientation.VERTICAL), lifeText,
+                new Separator(Orientation.VERTICAL), coinText);
         bottomGameInfo.setAlignment(Pos.CENTER);
         root.setBottom(bottomGameInfo);
 
         primaryStage.setScene(scene);
         primaryStage.show();
 
+
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.SPACE) {
                 enemy.setJumping(true);
+            } else if (event.getCode() == KeyCode.E && enemy.getCanShoot()) {
+                enemy.attack();
+                Line redLine =
+                        new Line(enemy.getPositionX() + 2 * enemy.getRadius(),
+                                enemy.getPositionY() + enemy.getRadius(), 640,
+                                enemy.getPositionY() + enemy.getRadius());
+                redLine.setStroke(Color.RED);
+                redLine.setStrokeWidth(2);
+
+                if (!root.getChildren().contains(redLine)) {
+                    root.getChildren().add(redLine);
+                }
+
+                // Create a PauseTransition for a 0.5 second delay
+                PauseTransition pause =
+                        new PauseTransition(Duration.seconds(0.1));
+                pause.setOnFinished(e -> {
+                    // Remove the red line after the delay
+                    root.getChildren().remove(redLine);
+                });
+                // Start the PauseTransition
+                pause.play();
             }
         });
 
@@ -97,7 +129,6 @@ public class WindowView extends Application {
 
         root.getChildren().add(enemy.getImageView());
         //root.getChildren().add(coin.getImageView());
-
 
 
         AnimationTimer timer = new AnimationTimer() {
@@ -109,7 +140,8 @@ public class WindowView extends Application {
                         // Frame and speed calculations
                         double deltaTime = (now - lastTime) / 1e9;
                         double moveSpeedPerSecond = enemy.getHorizontalSpeed();
-                        double moveSpeedPerFrame = moveSpeedPerSecond * deltaTime;
+                        double moveSpeedPerFrame =
+                                moveSpeedPerSecond * deltaTime;
 
                         // Enemy jumping mechanic
                         if (enemy.isJumping()) {
@@ -130,39 +162,46 @@ public class WindowView extends Application {
                             backgroundView2.setTranslateX(backgroundView1.getTranslateX() + backgroundImage.getWidth());
                         }
 
-                        // Spawn a coin every 2 seconds, adding it to the coins Arraylist
+                        // Spawn a coin every 2 seconds, adding it to the
+                        // coins Arraylist
                         if ((now - lastCoinTime) / 1e9 >= 2.0) {
                             Coin coin = new Coin();
                             // X Position of the coin
                             coin.getImageView().setTranslateX(coin.getPositionX());
                             // Y Position of the coin image
                             coin.getImageView().setTranslateY(coin.getPositionY());
-                            root.getChildren().add(coin.getImageView()); // Add it to the root
+                            root.getChildren().add(coin.getImageView()); //
+                            // Add it to the root
 
                             coins.add(coin);
                             lastCoinTime = now; // Update the last coin time
-                            //System.out.println("Length of coin array : " + coins.size());
+                            //System.out.println("Length of coin array : " +
+                            // coins.size());
                         }
 
-                        // Iterator to be able to remove coins from the Arraylist, while cycling through all the coins
+                        // Iterator to be able to remove coins from the
+                        // Arraylist, while cycling through all the coins
                         Iterator<Coin> iterator = coins.iterator();
                         while (iterator.hasNext()) {
                             Coin coin = iterator.next();
                             coin.setPositionX(coin.getPositionX() - moveSpeedPerFrame);
                             coin.getImageView().setTranslateX(coin.getPositionX());
 
-                            // If the coin gets out of the screen to the left, remove it from the ArrayList
+                            // If the coin gets out of the screen to the
+                            // left, remove it from the ArrayList
                             if (coin.getPositionX() + coin.getRadius() * 2 <= 0) {
                                 root.getChildren().remove(coin.getImageView()); // Remove from the scene graph
                                 iterator.remove(); // Remove from the list
                             }
 
-                            // If the enemy gets the coin, remove it from the screen and add it to the coin counter
-                            // All the conditions to verify if the coins is in the enemy's hitbox
+                            // If the enemy gets the coin, remove it from
+                            // the screen and add it to the coin counter
+                            // All the conditions to verify if the coins is
+                            // in the enemy's hitbox
                             if (coin.getPositionX() <= enemy.getPositionX() + enemy.getRadius() * 2 &&
-                                coin.getPositionX() >= enemy.getPositionX() - enemy.getRadius() * 2 &&
-                                coin.getPositionY() <= enemy.getPositionY() + enemy.getRadius() * 2 &&
-                                coin.getPositionY() >= enemy.getPositionY() - enemy.getRadius() * 2 ){
+                                    coin.getPositionX() >= enemy.getPositionX() - enemy.getRadius() * 2 &&
+                                    coin.getPositionY() <= enemy.getPositionY() + enemy.getRadius() * 2 &&
+                                    coin.getPositionY() >= enemy.getPositionY() - enemy.getRadius() * 2) {
 
                                 root.getChildren().remove(coin.getImageView()); // Remove from the scene graph
                                 iterator.remove(); // Remove from the list
@@ -172,18 +211,100 @@ public class WindowView extends Application {
                                 coinText.setText("Coins: " + enemy.getCoinCollected());
                             }
                         }
+                        //*
+                        // Spawns a Hero every 3 seconds, adding it to the
+                        // hero Arraylist
 
-                        // Spawn a Hero every 3 seconds, adding it to the hero Arraylist
-                        if ((now - lastHeroTime) / 1e9 >= 3.0){
-                            // Random number. If i == 0 => Melee. If i == 1 => Furtif. If i == 2 => Tank
-                            int i = (int) Math.floor((Math.random() * 3));
+                        if ((now - lastHeroTime) / 1e9 >= 3.0) {
+                            // Random number. If i == 0 => Melee. If i == 1
+                            // => Furtif. If i == 2 => Tank
+                            int randomHeroType =
+                                    (int) Math.floor((Math.random() * 3));
 
-                            HeroMelee melee = new HeroMelee();
-                            /*
-                            if (i == 0){
+                            if (randomHeroType == 0) {
                                 HeroMelee melee = new HeroMelee();
+                                // X position of the melee Hero
+                                melee.getImageView().setTranslateX(melee.getPositionX());
+                                // Y Position of the melee Hero
+                                melee.getImageView().setTranslateY(melee.getPositionY());
+                                root.getChildren().add(melee.getImageView()); // Add it to the root
+
+                                heroes.add(melee);
+                            } else if (randomHeroType == 1) {
+                                HeroFurtif furtif = new HeroFurtif();
+                                // X position of the melee Hero
+                                furtif.getImageView().setTranslateX(furtif.getPositionX());
+                                // Y Position of the melee Hero
+                                furtif.getImageView().setTranslateY(furtif.getPositionY());
+                                root.getChildren().add(furtif.getImageView()); // Add it to the root
+
+                                heroes.add(furtif);
+                            } else {
+                                HeroTank tank = new HeroTank();
+                                // X position of the melee Hero
+                                tank.getImageView().setTranslateX(tank.getPositionX());
+                                // Y Position of the melee Hero
+                                tank.getImageView().setTranslateY(tank.getPositionY());
+                                root.getChildren().add(tank.getImageView()); // Add it to the root
+
+                                heroes.add(tank);
                             }
-                            */
+
+                            lastHeroTime = now; // Update lastHeroTime
+
+                        }
+                        Iterator<Character> characterIterator =
+                                heroes.iterator();
+                        while (characterIterator.hasNext()) {
+                            Character character = characterIterator.next();
+                            character.setPositionX(character.getPositionX() - moveSpeedPerFrame);
+                            character.getImageView().setTranslateX(character.getPositionX());
+
+                            // If the Hero gets out of the screen to the left,
+                            // remove it from the ArrayList
+                            if (character.getPositionX() + character.getRadius() * 2 <= 0) {
+                                root.getChildren().remove(character.getImageView()); // Remove from the scene graph
+                                characterIterator.remove(); // Remove from
+                                // the list
+                            }
+
+                            // All the conditions to verify if the coins is
+                            // in the enemy's hitbox
+                            if (character.getPositionX() <= enemy.getPositionX() + enemy.getRadius() * 2 &&
+                                    character.getPositionX() >= enemy.getPositionX() - enemy.getRadius() * 2 &&
+                                    character.getPositionY() <= enemy.getPositionY() + enemy.getRadius() * 2 &&
+                                    character.getPositionY() >= enemy.getPositionY() - enemy.getRadius() * 2) {
+
+                                // If the hero is melee type, the enemy
+                                // looses all HP
+                                if (character.getType().equals("melee")) {
+                                    enemy.setHealth(-100);
+                                    lifeText.setText("Life: " + enemy.getHealth());
+                                    System.out.println("Flash: " + enemy.getHealth());
+
+                                } else if (character.getType().equals(
+                                        "furtif")) {
+                                    // Furtif type
+                                    enemy.setCoinCollected(-10);
+                                    coinText.setText("Coins: " + enemy.getCoinCollected());
+                                    System.out.println("Arrow: " + enemy.getCoinCollected());
+                                } else {
+                                    // Tank type
+                                    enemy.setHealth(-50);
+                                    lifeText.setText("Life: " + enemy.getHealth());
+                                    System.out.println("SUPERMAN: " + enemy.getHealth());
+                                }
+
+                                root.getChildren().remove(character.getImageView()); // Remove from the scene graph
+                                characterIterator.remove(); // Remove from
+                                // the list
+                            }
+                            // Check if the game should end
+                            if (enemy.getHealth() <= 0) {
+                                gameIsRunning = false;
+                                showGameOverScreen();
+                                this.stop(); // Stop the animation timer
+                            }
                         }
                     }
                     lastTime = now;
@@ -191,5 +312,61 @@ public class WindowView extends Application {
             }
         };
         timer.start();
+    }
+
+
+    private void showGameOverScreen() {
+        gameIsRunning = false; // Stop the game loop or any other updates
+
+        Platform.runLater(() -> {
+            VBox gameOverScreen = new VBox(20);
+            gameOverScreen.setAlignment(Pos.CENTER);
+
+            // Game Over label
+            Label gameOverLabel = new Label("Game Over!");
+            gameOverLabel.setFont(Font.font("Arial", 30));
+            gameOverLabel.setTextFill(Color.RED);
+
+            // Coin collected label
+            Label coinCollectedLabel =
+                    new Label("You died collecting: " + enemy.getCoinCollected() + " coins!");
+            coinCollectedLabel.setFont(Font.font("Arial", 18));
+            coinCollectedLabel.setTextFill(Color.WHITE);
+
+            // Restart button
+            Button restartButton = new Button("Restart");
+            restartButton.setPrefWidth(100);
+            restartButton.setPrefHeight(50);
+            restartButton.setStyle("-fx-font-size: 20px;");
+            restartButton.setOnAction(e -> restartGame());
+
+            gameOverScreen.getChildren().addAll(gameOverLabel,
+                    coinCollectedLabel, restartButton);
+            gameOverScreen.setStyle("-fx-background-color: rgb(0, 0, 0)");
+
+            Scene gameOverScene = new Scene(gameOverScreen, 400, 300);
+            gameOverStage = new Stage();
+            gameOverStage.initModality(Modality.APPLICATION_MODAL);
+            gameOverStage.setScene(gameOverScene);
+            gameOverStage.showAndWait();
+        });
+    }
+
+    private void restartGame() {
+        enemy.resetEnemyStats();
+        coins.clear();
+        heroes.clear();
+        root.getChildren().clear();
+        start(primaryStage);
+        gameIsRunning = true;
+
+        // Close the game over pop-up
+        if (gameOverStage != null) {
+            gameOverStage.close();
+        }
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }

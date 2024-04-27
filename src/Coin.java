@@ -14,7 +14,7 @@ public class Coin {
     // Constructor
     public Coin() {
         // Load the image for the coin
-        Image coinImage = new Image("/assets/coin.png");
+        Image coinImage = new Image("/assets/Coin.png");
         imageView = new ImageView(coinImage);
         imageView.setFitWidth(getCoinSize());
         imageView.setFitHeight(getCoinSize());
@@ -60,7 +60,7 @@ public class Coin {
     public void setRandomPositionY(int sceneSize,
                                    int imageRadius) {
         Random random = new Random();
-        this.positionY = random.nextInt(sceneSize - imageRadius);
+        this.positionY = random.nextInt(imageRadius, sceneSize - imageRadius);
     }
 
 }

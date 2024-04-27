@@ -9,19 +9,22 @@ public class Enemy extends Character {
     private int horizontalSpeed = 120;
     private int verticalSpeed = 0;
     private int gravityAcceleration = 170;
+    private int startGravityAcceleration = 170;
     private double positionX;
     private double positionY;
     private final ImageView imageView;
+    private boolean canShoot = true;
 
 
     //Constructor
-    public Enemy(){
+    public Enemy() {
         // Load the image for the Joker
+        super();
         Image imageEnemy = new Image("/assets/Joker.png");
         this.imageView = new ImageView(imageEnemy);
         imageView.setFitWidth(getRadius() * 2);
         imageView.setFitHeight(getRadius() * 2);
-        this.positionX = 70 - getRadius();
+        this.positionX = 320 - getRadius();
         this.positionY = 320;
     }
 
@@ -32,7 +35,7 @@ public class Enemy extends Character {
     }
 
     public int getHealth() {
-        return health;
+        return this.health;
     }
 
     public double getPositionX() {
@@ -56,7 +59,19 @@ public class Enemy extends Character {
     }
 
     public int getGravityAcceleration() {
+        return startGravityAcceleration;
+    }
+
+    public int getStartGravityAcceleration() {
         return gravityAcceleration;
+    }
+
+    @Override
+    public boolean getIsAlive() {
+        if (this.health > 0) {
+            return true;
+        }
+        return false;
     }
 
     private boolean isJumping = false;
@@ -69,26 +84,45 @@ public class Enemy extends Character {
         return 30;
     }
 
+    public boolean getCanShoot() {
+        return canShoot;
+    }
+
+
     // Setters
     public void setHealth(int health) {
-        this.health = health;
+        this.health += health;
+        if (this.getHealth() <= 0) {
+            this.health = 0;
+        }
     }
 
     public void setCoinCollected(int coinCollected) {
         this.coinCollected += coinCollected;
-        ajustGravity();
-        System.out.println(this.coinCollected);
 
-        // Easter egg : if the enemy gets 21, 25, or 2125 coins (Robin teaches
-        // the IFT2125 class), then a message is printed in the console.
-        if (this.coinCollected == 21) {
-            System.out.println("Merci");
-        }
-        if (this.coinCollected == 25) {
-            System.out.println("Robin");
-        }
-        if (this.coinCollected == 2125) {
-            System.out.println("MERCI ROBIN OMG SO GOOD!! THOU ART THE BEST");
+        if (coinCollected < 0) {
+            // When removing coins. The speed and gravity not changed.
+            if (this.getCoinCollected() <= 0) {
+                this.coinCollected = 0;
+            }
+        } else {
+            ajustGravity();
+            this.horizontalSpeed += 10;
+            System.out.println(this.coinCollected);
+
+            // Easter egg : if the enemy gets 21, 25, or 2125 coins (Robin
+            // teaches
+            // the IFT2125 class), then a message is printed in the console.
+            if (this.coinCollected == 21) {
+                System.out.println("Merci");
+            }
+            if (this.coinCollected == 25) {
+                System.out.println("Robin\nMERCI FULL ROBIN");
+            }
+            if (this.coinCollected == 2125) {
+                System.out.println("MERCI ROBIN OMG SO GOOD!! THOU ART THE " +
+                        "BEST");
+            }
         }
     }
 
@@ -114,13 +148,8 @@ public class Enemy extends Character {
 
 
     // Methods
-
     public boolean isJumping() {
         return isJumping;
-    }
-
-    public void ajustGravity() {
-        this.gravityAcceleration += this.coinCollected * 15;
     }
 
     // Jump method revised to allow re-jumping when descending
@@ -131,6 +160,11 @@ public class Enemy extends Character {
         }
     }
 
+    public void ajustGravity() {
+        this.gravityAcceleration =
+                this.startGravityAcceleration + this.coinCollected * 15;
+    }
+
     public void applyGravity(double deltaTime) {
         // Apply gravity continuously
         this.verticalSpeed += gravityAcceleration * deltaTime;
@@ -139,14 +173,32 @@ public class Enemy extends Character {
         this.positionY += this.verticalSpeed * deltaTime;
         if (this.positionY > 320) {
             this.positionY = 320;
-            this.verticalSpeed = 0;
+            this.verticalSpeed = -100;
         }
 
         // If the enemy is on the ceiling
-        if(this.positionY < 0) {
+        if (this.positionY < 0) {
             this.positionY = 0;
             this.verticalSpeed = 100;
         }
+    }
+
+    public void attack() {
+    }
+
+    public void resetEnemyStats() {
+        this.health = 100;
+        this.coinCollected = 0;
+        this.horizontalSpeed = 120;
+        this.verticalSpeed = 0;
+        this.gravityAcceleration = 170;
+        this.positionX = 320 - getRadius();
+        this.positionY = 320;
+        this.isJumping = false;
+        this.canJump = true;
+        this.canShoot = true;
 
     }
+
+
 }

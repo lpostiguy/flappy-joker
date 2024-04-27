@@ -1,19 +1,25 @@
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.util.Random;
+
 public class HeroMelee extends Character implements Hero {
     private double positionX;
     private double positionY;
+    private int radius;
     private final ImageView imageView;
 
     // Constructor
     public HeroMelee() {
+        super();
+        this.setRadius(this.randomRadius()); // Make the radius random
         Image meleeImage = new Image("/assets/Flash.png");
         this.imageView = new ImageView(meleeImage);
-        imageView.setFitWidth(getRadius() * 2);
-        imageView.setFitHeight(getRadius() * 2);
-        this.positionX = 70 - getRadius();
-        this.positionY = 200;
+        imageView.setFitWidth(this.getRadius() * 2);
+        imageView.setFitHeight(this.getRadius() * 2);
+
+        this.positionX = 640 + getRadius();
+        this.positionY = setRandomPosition(360, getRadius());
     }
 
     // Getters
@@ -41,6 +47,15 @@ public class HeroMelee extends Character implements Hero {
         return imageView;
     }
 
+    // An enemy's radius is randomized between 10 and 45 pixels
+    public int getRadius() {
+        return radius;
+    }
+
+    public String getType() {
+        return "melee";
+    }
+
     // Setters
     public void setPositionX(double position) {
         this.positionX = position;
@@ -50,5 +65,28 @@ public class HeroMelee extends Character implements Hero {
         this.positionY = position;
     }
 
+    private void setRadius(int radius) {
+        this.radius = radius;
+    }
 
+    // Methods
+
+    // randomRadius method return a random between 10 and 45
+    public int randomRadius() {
+        int i = 10; // Lowest possible value of the radius
+
+        // Add a random number between 0 and 35 (10 + 35 = 45)
+        i += (int) (Math.floor(Math.random() * 35));
+        return i;
+    }
+
+    // Set a random YPosition
+    public int setRandomPosition(int sceneSize, int imageRadius) {
+        Random random = new Random();
+
+        int maxY = sceneSize - imageRadius;
+
+        // Generate random position Y within the calculated range
+        return random.nextInt(maxY - imageRadius + 1) + imageRadius;
+    }
 }

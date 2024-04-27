@@ -1,3 +1,5 @@
+import javafx.scene.image.ImageView;
+
 public abstract class Character {
     // Attributes
     private boolean isAlive = true;
@@ -5,6 +7,7 @@ public abstract class Character {
     private double positionY;
     private int radius;
     private int horizontalSpeed;
+    private ImageView imageView;
 
     // Getters
     public boolean getIsAlive() {
@@ -25,6 +28,14 @@ public abstract class Character {
 
     public int getHorizontalSpeed() {
         return horizontalSpeed;
+    }
+
+    public ImageView getImageView() {
+        return imageView;
+    }
+
+    public String getType() {
+        return "Character";
     }
 
     // Setters
