@@ -1,4 +1,4 @@
-public class melee extends Character implements Hero {
+public class HeroMelee extends Character implements Hero {
     // Getters
     public int getAttackDamage() {
         return 100;
@@ -13,7 +13,5 @@ public class melee extends Character implements Hero {
     }
 
     // Constructor
-    public melee() {
-        super();
-    }
+    public HeroMelee() {super();}
 }
