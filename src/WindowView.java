@@ -15,11 +15,22 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyCode;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 public class WindowView extends Application {
     private Enemy enemy = new Enemy();
     private boolean gameIsRunning = true;
     private long lastTime = 0; // Variable for the animation
-    private Coin coin = new Coin();
+    //private Coin coin = new Coin();
+
+    // Arraylist containing all the coins
+    private ArrayList<Coin> coins = new ArrayList<>();
+    private long lastCoinTime = 0;
+
+    // Arraylist containing all the heroes
+    //private ArrayList<>
+
 
     public static void main(String[] args) {
         launch(args);
@@ -81,17 +92,13 @@ public class WindowView extends Application {
             }
         });
 
-
-        // X Position of the coin
-        coin.getImageView().setTranslateX(coin.getPositionX());
-        // Y Position of the coin image
-        coin.getImageView().setTranslateY(coin.getPositionY());
-
         // X Position of the joker
         enemy.getImageView().setTranslateX(enemy.getPositionX());
 
         root.getChildren().add(enemy.getImageView());
-        root.getChildren().add(coin.getImageView());
+        //root.getChildren().add(coin.getImageView());
+
+
 
         AnimationTimer timer = new AnimationTimer() {
             @Override
@@ -123,9 +130,50 @@ public class WindowView extends Application {
                             backgroundView2.setTranslateX(backgroundView1.getTranslateX() + backgroundImage.getWidth());
                         }
 
-                        // Move coin
-                        coin.setPositionX(coin.getPositionX() - moveSpeedPerFrame);
-                        coin.getImageView().setTranslateX(coin.getPositionX());
+                        // Spawn a coin every 2 seconds, adding it to the coins Arraylist
+                        if ((now - lastCoinTime) / 1e9 >= 2.0) {
+                            Coin coin = new Coin();
+                            // X Position of the coin
+                            coin.getImageView().setTranslateX(coin.getPositionX());
+                            // Y Position of the coin image
+                            coin.getImageView().setTranslateY(coin.getPositionY());
+                            root.getChildren().add(coin.getImageView()); // Add it to the root
+
+                            coins.add(coin);
+                            lastCoinTime = now; // Update the last coin time
+                            //System.out.println("Length of coin array : " + coins.size());
+                        }
+
+                        // Iterator to be able to remove coins from the Arraylist, while cycling through all the coins
+                        Iterator<Coin> iterator = coins.iterator();
+                        while (iterator.hasNext()) {
+                            Coin coin = iterator.next();
+                            coin.setPositionX(coin.getPositionX() - moveSpeedPerFrame);
+                            coin.getImageView().setTranslateX(coin.getPositionX());
+
+                            // If the coin gets out of the screen to the left, remove it from the ArrayList
+                            if (coin.getPositionX() + coin.getRadius() * 2 <= 0) {
+                                root.getChildren().remove(coin.getImageView()); // Remove from the scene graph
+                                iterator.remove(); // Remove from the list
+                            }
+
+                            // If the enemy gets the coin, remove it from the screen and add it to the coin counter
+                            // All the conditions to verify if the coins is in the enemy's hitbox
+                            if (coin.getPositionX() <= enemy.getPositionX() + enemy.getRadius() * 2 &&
+                                coin.getPositionX() >= enemy.getPositionX() - enemy.getRadius() * 2 &&
+                                coin.getPositionY() <= enemy.getPositionY() + enemy.getRadius() * 2 &&
+                                coin.getPositionY() >= enemy.getPositionY() - enemy.getRadius() * 2 ){
+
+                                root.getChildren().remove(coin.getImageView()); // Remove from the scene graph
+                                iterator.remove(); // Remove from the list
+
+                                // Add the coin to the counter and update it
+                                enemy.setCoinCollected(1);
+                                coinText.setText("Coins: " + enemy.getCoinCollected());
+                            }
+                        }
+
+                        // Spawn a Hero every 3 seconds, adding it to the hero Arraylist
                     }
                     lastTime = now;
                 }
