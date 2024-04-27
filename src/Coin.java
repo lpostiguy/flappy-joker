@@ -6,19 +6,21 @@ import java.util.Random;
 public class Coin {
     private double positionX;
     private double positionY;
-    private final ImageView imageView; // ImageView to represent the image of the coin
+    private boolean visible;
+    // ImageView to represent the image
+    // of the coin
+    private final ImageView imageView;
 
     // Constructor
     public Coin() {
         // Load the image for the coin
-        Image coinImage = new Image("/assets/coin.png"); // Replace "coin_image.png" with your image path
+        Image coinImage = new Image("/assets/coin.png");
         imageView = new ImageView(coinImage);
         imageView.setFitWidth(getCoinSize());
         imageView.setFitHeight(getCoinSize());
-        setRandomPositionY(400,getCoinSize());
+        setRandomPositionY(400, getCoinSize());
         // Set the position of the Coin image
-        //TODO: Fix this for the position of the coin
-        double positionX = 400 + getCoinSize();
+        this.positionX = 640 + getCoinSize();
     }
 
     // Getters
@@ -29,12 +31,14 @@ public class Coin {
     }
 
     // Radius is a constant for coins
-    public int getRadius(){
-        return 25;}
+    public int getRadius() {
+        return 25;
+    }
 
     public double getPositionX() {
         return positionX;
     }
+
     public double getPositionY() {
         return positionY;
     }
@@ -44,16 +48,17 @@ public class Coin {
     }
 
     // Setters
-    public void setPositionY(double position){
+    public void setPositionY(double position) {
         this.positionY = position;
     }
-    public void setPositionX(double position){
+
+    public void setPositionX(double position) {
         this.positionX = position;
     }
 
     // Set a random YPosition
     public void setRandomPositionY(int sceneSize,
-                                                   int imageRadius) {
+                                   int imageRadius) {
         Random random = new Random();
         this.positionY = random.nextInt(sceneSize - imageRadius);
     }
