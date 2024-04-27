@@ -18,7 +18,7 @@ public class Enemy extends Character {
     public Enemy(){
         // Load the image for the Joker
         Image imageEnemy = new Image("/assets/Joker.png");
-        imageView = new ImageView(imageEnemy);
+        this.imageView = new ImageView(imageEnemy);
         imageView.setFitWidth(getRadius() * 2);
         imageView.setFitHeight(getRadius() * 2);
         this.positionX = 70 - getRadius();
@@ -34,6 +34,7 @@ public class Enemy extends Character {
     public int getHealth() {
         return health;
     }
+
     public double getPositionX() {
         return positionX;
     }

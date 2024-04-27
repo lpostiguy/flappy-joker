@@ -22,14 +22,14 @@ public class WindowView extends Application {
     private Enemy enemy = new Enemy();
     private boolean gameIsRunning = true;
     private long lastTime = 0; // Variable for the animation
-    //private Coin coin = new Coin();
 
     // Arraylist containing all the coins
     private ArrayList<Coin> coins = new ArrayList<>();
     private long lastCoinTime = 0;
 
     // Arraylist containing all the heroes
-    //private ArrayList<>
+    private ArrayList<Character> heroes = new ArrayList<>();
+    private long lastHeroTime = 0;
 
 
     public static void main(String[] args) {
@@ -174,6 +174,17 @@ public class WindowView extends Application {
                         }
 
                         // Spawn a Hero every 3 seconds, adding it to the hero Arraylist
+                        if ((now - lastHeroTime) / 1e9 >= 3.0){
+                            // Random number. If i == 0 => Melee. If i == 1 => Furtif. If i == 2 => Tank
+                            int i = (int) Math.floor((Math.random() * 3));
+
+                            HeroMelee melee = new HeroMelee();
+                            /*
+                            if (i == 0){
+                                HeroMelee melee = new HeroMelee();
+                            }
+                            */
+                        }
                     }
                     lastTime = now;
                 }
