@@ -1,3 +1,4 @@
+
 public class FlappyEnemy {
     private Enemy enemy; // Creating an enemy with default values
     private WindowView view;

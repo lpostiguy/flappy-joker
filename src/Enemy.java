@@ -21,7 +21,7 @@ public class Enemy extends Character {
         imageView = new ImageView(imageEnemy);
         imageView.setFitWidth(getRadius() * 2);
         imageView.setFitHeight(getRadius() * 2);
-        this.positionX = 320 - getRadius();
+        this.positionX = 70 - getRadius();
         this.positionY = 320;
     }
 
@@ -134,12 +134,14 @@ public class Enemy extends Character {
         // Apply gravity continuously
         this.verticalSpeed += gravityAcceleration * deltaTime;
 
-        // Update position
+        // If the enemy is on the ground
         this.positionY += this.verticalSpeed * deltaTime;
         if (this.positionY > 320) {
             this.positionY = 320;
-            this.verticalSpeed = -100;
+            this.verticalSpeed = 0;
         }
+
+        // If the enemy is on the ceiling
         if(this.positionY < 0) {
             this.positionY = 0;
             this.verticalSpeed = 100;

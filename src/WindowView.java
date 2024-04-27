@@ -98,10 +98,13 @@ public class WindowView extends Application {
             public void handle(long now) {
                 if (gameIsRunning) {
                     if (lastTime != 0) {
+
+                        // Frame and speed calculations
                         double deltaTime = (now - lastTime) / 1e9;
                         double moveSpeedPerSecond = enemy.getHorizontalSpeed();
                         double moveSpeedPerFrame = moveSpeedPerSecond * deltaTime;
 
+                        // Enemy jumping mechanic
                         if (enemy.isJumping()) {
                             enemy.jump();
                             enemy.setJumping(false);
@@ -109,6 +112,7 @@ public class WindowView extends Application {
                         enemy.applyGravity(deltaTime);
                         enemy.getImageView().setTranslateY(enemy.getPositionY());
 
+                        // Continuous background
                         backgroundView1.setTranslateX(backgroundView1.getTranslateX() - moveSpeedPerFrame);
                         backgroundView2.setTranslateX(backgroundView2.getTranslateX() - moveSpeedPerFrame);
 
