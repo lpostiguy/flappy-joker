@@ -74,7 +74,7 @@ public class Enemy extends Character {
     }
 
     public void setCoinCollected(int coinCollected) {
-        this.coinCollected = coinCollected;
+        this.coinCollected += coinCollected;
         ajustGravity();
         System.out.println(this.coinCollected);
 
