@@ -119,6 +119,20 @@ public class WindowView extends Application {
                     // Remove the red line after the delay
                     root.getChildren().remove(redLine);
                 });
+
+                // Killing heroes
+                Iterator<Character> characterIterator = heroes.iterator();
+                while (characterIterator.hasNext()) {
+                    Character character = characterIterator.next();
+                    System.out.println(character);
+                    if (enemy.getPositionY() <= character.getPositionY() + character.getRadius() &&
+                        enemy.getPositionY() >= character.getPositionY() - character.getRadius() ) {
+                        // Remove the hero from the game
+                        root.getChildren().remove(character.getImageView());
+                        characterIterator.remove();
+                    }
+                }
+
                 // Start the PauseTransition
                 pause.play();
             }

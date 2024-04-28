@@ -49,6 +49,9 @@ public class HeroTank extends Character implements Hero {
     public String getType() {
         return "tank";
     }
+    public int getRadius() {
+        return radius;
+    }
 
     // Setters
     public void setPositionX(double position) {
