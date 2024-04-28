@@ -23,14 +23,17 @@ public class HeroMelee extends Character implements Hero {
     }
 
     // Getters
+    @Override
     public int getAttackDamage() {
         return 100;
     }
 
+    @Override
     public int getCoinDropAmount() {
         return 5;
     }
 
+    @Override
     public int getCoinStealAmount() {
         return 0;
     }

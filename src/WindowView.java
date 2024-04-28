@@ -129,6 +129,11 @@ public class WindowView extends Application {
                         enemy.getPositionY() >= character.getPositionY() - character.getRadius() ) {
                         // Remove the hero from the game
                         root.getChildren().remove(character.getImageView());
+
+                        // Give the loot to the enemy
+                        enemy.setCoinCollected(character.getCoinDropAmount());
+                        coinText.setText("Coins: " + enemy.getCoinCollected());
+
                         characterIterator.remove();
                     }
                 }

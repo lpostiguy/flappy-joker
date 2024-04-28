@@ -10,6 +10,18 @@ public abstract class Character {
     private ImageView imageView;
 
     // Getters
+    public int getAttackDamage() {
+        return 0;
+    }   // TODO
+
+    public int getCoinDropAmount() {
+        return 0;
+    }
+
+    public int getCoinStealAmount() {
+        return 0;
+    }   // TODO
+
     public boolean getIsAlive() {
         return isAlive;
     }
