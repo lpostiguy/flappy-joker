@@ -13,7 +13,7 @@ public class HeroTank extends Character implements Hero {
     public HeroTank() {
         super();
         this.setRadius(this.randomRadius()); // Make the radius random
-        Image meleeImage = new Image("/assets/Superman.png");
+        Image meleeImage = new Image("/assets/images/Superman.png");
         this.imageView = new ImageView(meleeImage);
         imageView.setFitWidth(this.getRadius() * 2);
         imageView.setFitHeight(this.getRadius() * 2);

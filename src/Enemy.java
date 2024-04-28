@@ -20,7 +20,7 @@ public class Enemy extends Character {
     public Enemy() {
         // Load the image for the Joker
         super();
-        Image imageEnemy = new Image("/assets/Joker.png");
+        Image imageEnemy = new Image("/assets/images/Joker.png");
         this.imageView = new ImageView(imageEnemy);
         imageView.setFitWidth(getRadius() * 2);
         imageView.setFitHeight(getRadius() * 2);
@@ -90,6 +90,11 @@ public class Enemy extends Character {
 
 
     // Setters
+
+    public void setCanShoot(boolean canShoot) {
+        this.canShoot = canShoot;
+    }
+
     public void setHealth(int health) {
         this.health += health;
         if (this.getHealth() <= 0) {
@@ -106,6 +111,7 @@ public class Enemy extends Character {
                 this.coinCollected = 0;
             }
         } else {
+            SoundPlayer.playSound("src/assets/soundEffects/collectCoin.mp3");
             ajustGravity();
             this.horizontalSpeed += 10;
             System.out.println(this.coinCollected);
@@ -184,6 +190,7 @@ public class Enemy extends Character {
     }
 
     public void attack() {
+        SoundPlayer.playSound("src/assets/soundEffects/laserGunShotSound.mp3");
     }
 
     public void resetEnemyStats() {

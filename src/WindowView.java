@@ -50,7 +50,7 @@ public class WindowView extends Application {
         primaryStage.setTitle("Flappy Enemy");
 
         // Load the background image
-        Image backgroundImage = new Image("/assets/bg.png");
+        Image backgroundImage = new Image("/assets/images/Bg.png");
         ImageView backgroundView1 = new ImageView(backgroundImage);
         ImageView backgroundView2 = new ImageView(backgroundImage);
         backgroundView2.setTranslateX(backgroundImage.getWidth());
@@ -72,6 +72,7 @@ public class WindowView extends Application {
         pauseButton.setFocusTraversable(false);
         pauseButton.setOnAction(e -> {
             gameIsRunning = !gameIsRunning;
+            enemy.setCanShoot(gameIsRunning);
             pauseButton.setText(gameIsRunning ? "Pause" : "Resume");
         });
 
@@ -120,6 +121,7 @@ public class WindowView extends Application {
                     root.getChildren().remove(redLine);
                 });
 
+                // TODO: Maybe their is a way to add this to the enemy class
                 // Killing heroes
                 Iterator<Character> characterIterator = heroes.iterator();
                 while (characterIterator.hasNext()) {
@@ -142,6 +144,7 @@ public class WindowView extends Application {
                 pause.play();
             }
         });
+
 
         // X Position of the joker
         enemy.getImageView().setTranslateX(enemy.getPositionX());
@@ -357,8 +360,11 @@ public class WindowView extends Application {
                                 // the list
                             }
                             // Check if the game should end
-                            if (enemy.getHealth() <= 0) {
+                            if (!enemy.getIsAlive()) {
                                 gameIsRunning = false;
+                                SoundPlayer.playSound("src/assets/soundEffects" +
+                                        "/gameOverSound" +
+                                        ".mp3");
                                 showGameOverScreen();
                                 this.stop(); // Stop the animation timer
                             }
@@ -410,6 +416,9 @@ public class WindowView extends Application {
     }
 
     private void restartGame() {
+        SoundPlayer.playSound("src/assets/soundEffects" +
+                "/gameStart" +
+                ".mp3");
         enemy.resetEnemyStats();
         coins.clear();
         heroes.clear();

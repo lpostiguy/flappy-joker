@@ -14,7 +14,7 @@ public class HeroFurtif extends Character implements Hero {
     public HeroFurtif() {
         super();
         this.setRadius(this.randomRadius()); // Make the radius random
-        Image meleeImage = new Image("/assets/Arrow.png");
+        Image meleeImage = new Image("/assets/images/Arrow.png");
         this.imageView = new ImageView(meleeImage);
         imageView.setFitWidth(this.getRadius() * 2);
         imageView.setFitHeight(this.getRadius() * 2);

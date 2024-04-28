@@ -13,7 +13,7 @@ public class HeroMelee extends Character implements Hero {
     public HeroMelee() {
         super();
         this.setRadius(this.randomRadius()); // Make the radius random
-        Image meleeImage = new Image("/assets/Flash.png");
+        Image meleeImage = new Image("/assets/images/Flash.png");
         this.imageView = new ImageView(meleeImage);
         imageView.setFitWidth(this.getRadius() * 2);
         imageView.setFitHeight(this.getRadius() * 2);
