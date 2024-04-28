@@ -151,6 +151,7 @@ public class WindowView extends Application {
 
 
         AnimationTimer timer = new AnimationTimer() {
+            double yOffset = 0; // For the sinusoidal movement of the furtive heroes
             @Override
             public void handle(long now) {
                 if (gameIsRunning) {
@@ -159,8 +160,8 @@ public class WindowView extends Application {
                         // Frame and speed calculations
                         double deltaTime = (now - lastTime) / 1e9;
                         double moveSpeedPerSecond = enemy.getHorizontalSpeed();
-                        double moveSpeedPerFrame =
-                                moveSpeedPerSecond * deltaTime;
+                        double moveSpeedPerFrame = moveSpeedPerSecond * deltaTime;
+
 
                         // Enemy jumping mechanic
                         if (enemy.isJumping()) {
@@ -251,6 +252,7 @@ public class WindowView extends Application {
                                 heroes.add(melee);
                             } else if (randomHeroType == 1) {
                                 HeroFurtif furtif = new HeroFurtif();
+
                                 // X position of the melee Hero
                                 furtif.getImageView().setTranslateX(furtif.getPositionX());
                                 // Y Position of the melee Hero
@@ -272,12 +274,48 @@ public class WindowView extends Application {
                             lastHeroTime = now; // Update lastHeroTime
 
                         }
-                        Iterator<Character> characterIterator =
-                                heroes.iterator();
+                        yOffset = 50 * Math.sin(now * 1e-9); // 50 pixels of amplitude
+
+                        // Counter for a new teleportation
+                        double tankLastTeleportTime = now;
+
+                        Iterator<Character> characterIterator = heroes.iterator();
+
                         while (characterIterator.hasNext()) {
                             Character character = characterIterator.next();
                             character.setPositionX(character.getPositionX() - moveSpeedPerFrame);
                             character.getImageView().setTranslateX(character.getPositionX());
+
+                            // Sinusoidal movement for furtive heroes
+                            if (character instanceof HeroFurtif){
+                                // Calculate the new Y position with sinusoidal motion
+                                double newY = character.getPositionY() + yOffset;
+
+
+
+                                // TODO : Hitbox issue
+                                // Update the Y position of the character
+                                //character.setPositionY(newY);
+
+                                // Update the Y translation of the character's image view
+                                character.getImageView().setTranslateY(newY);
+
+                            } else if (character instanceof HeroTank) { // TODO
+                                if ((now - tankLastTeleportTime) / 1e9 >= 0.5) {
+                                    double newX = character.getPositionX() + Math.random() * 60 - 30; // Random x within range [-30, 30]
+                                    double newY = character.getPositionY() + Math.random() * 60 - 30; // Random y within range [-30, 30]
+
+                                    // Update the logical position of HeroTank
+                                    character.setPositionX(newX);
+                                    character.setPositionY(newY);
+
+                                    // Update the visual translation of HeroTank
+                                    character.getImageView().setTranslateX(newX);
+                                    character.getImageView().setTranslateY(newY);
+
+                                    tankLastTeleportTime = now; // Update last teleportation time
+                                }
+                            }
 
                             // If the Hero gets out of the screen to the left,
                             // remove it from the ArrayList

@@ -42,9 +42,7 @@ public class HeroTank extends Character implements Hero {
         return positionY;
     }
 
-    public ImageView getImageView() {
-        return imageView;
-    }
+    public ImageView getImageView() {return imageView;}
 
     public String getType() {
         return "tank";
