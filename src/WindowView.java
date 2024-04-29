@@ -291,7 +291,7 @@ public class WindowView extends Application {
                             lastHeroTime = now; // Update lastHeroTime
 
                         }
-                        yOffset = 50 * Math.sin(now * 1e-9); // 50 pixels of amplitude
+                        yOffset = 0.5 * Math.sin(now * 1e-9); // 50 pixels of amplitude
 
 
 
@@ -304,34 +304,14 @@ public class WindowView extends Application {
 
                             // Sinusoidal movement for furtive heroes
                             if (character instanceof HeroFurtif){
-                                // Calculate the new Y position with sinusoidal motion
-                                double newY = character.getPositionY() + yOffset;
+                                ((HeroFurtif) character).updatePosition(now);
 
-                                // TODO : Hitbox issue
-                                // Update the Y position of the character
-
-                                // Update the Y translation of the character's image view
-                                character.getImageView().setTranslateY(newY);
-                                //character.setPositionY(newY);
 
                             } else if (character instanceof HeroTank) { // TODO
 
+                                // If the elasped time is greater than 500000000 ns = 0.5 seconds
                                 if ((now - tankLastTeleportTime) >= 500000000) {
-                                    System.out.println("AAAAAAAAAA");
-
-                                    double newX = character.getPositionX() + Math.random() * 60 - 30; // Random x within range [-30, 30]
-                                    double newY = character.getPositionY() + Math.random() * 60 - 30; // Random y within range [-30, 30]
-
-                                    // Update the logical position of HeroTank
-                                    //
-
-                                    // Update the visual translation of HeroTank
-                                    //character.getImageView().setTranslateX(newX);
-                                    //character.getImageView().setTranslateY(newY);
-
-
-                                    character.setPositionX(newX);
-                                    character.setPositionY(newY);
+                                    ((HeroTank) character).updatePosition();
                                     tankLastTeleportTime = now; // Update last teleportation time
                                 }
                             }

@@ -54,12 +54,10 @@ public class HeroTank extends Character implements Hero {
     // Setters
     public void setPositionX(double position) {
         this.positionX = position;
-        this.getImageView().setTranslateX(this.positionX);
     }
 
     public void setPositionY(double position) {
         this.positionY = position;
-        this.getImageView().setTranslateY(this.positionY);
     }
 
     private void setRadius(int radius) {
@@ -86,5 +84,17 @@ public class HeroTank extends Character implements Hero {
 
         // Generate random position Y within the calculated range
         return random.nextInt(maxY - imageRadius + 1) + imageRadius;
+    }
+
+    public void updatePosition() {
+        // Calculate the new Y position using sinusoidal motion
+        double newX = this.getPositionX() + Math.random() * 60 - 30; // Random x within range [-30, 30]
+        double newY = this.getPositionY() + Math.random() * 60 - 30; // Random y within range [-30, 30]
+
+        // Update the Y and X positions and the ImageView
+        positionY = newY;
+        positionX = newX;
+        imageView.setTranslateY(positionY);
+        imageView.setTranslateX(positionX);
     }
 }

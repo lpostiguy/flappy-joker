@@ -89,4 +89,14 @@ public class HeroFurtif extends Character implements Hero {
         // Generate random position Y within the calculated range
         return random.nextInt(maxY - imageRadius + 1) + imageRadius;
     }
+
+    public void updatePosition(double now) {
+        // Calculate the new Y position using sinusoidal motion
+        double yOffset = 0.5 * Math.sin(now * 1e-9); // Adjust frequency and amplitude as needed
+        double newY = positionY + yOffset;
+
+        // Update the Y position and the ImageView's translation
+        positionY = newY;
+        imageView.setTranslateY(positionY);
+    }
 }
