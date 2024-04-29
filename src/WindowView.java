@@ -307,10 +307,11 @@ public class WindowView extends Application {
                                 ((HeroFurtif) character).updatePosition(now);
 
 
-                            } else if (character instanceof HeroTank) { // TODO
+                            } else if (character instanceof HeroTank) {
 
                                 // If the elasped time is greater than 500000000 ns = 0.5 seconds
                                 if ((now - tankLastTeleportTime) >= 500000000) {
+
                                     ((HeroTank) character).updatePosition();
                                     tankLastTeleportTime = now; // Update last teleportation time
                                 }
