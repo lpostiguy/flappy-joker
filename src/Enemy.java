@@ -12,8 +12,8 @@ public class Enemy extends Character {
     private int startGravityAcceleration = 170;
     private double positionX;
     private double positionY;
-    private final ImageView imageView;
     private boolean canShoot = true;
+    private final ImageView imageView;
 
 
     //Constructor

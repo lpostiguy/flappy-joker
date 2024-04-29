@@ -102,6 +102,7 @@ public class WindowView extends Application {
                 enemy.setJumping(true);
             } else if (event.getCode() == KeyCode.E && enemy.getCanShoot()) {
                 enemy.attack();
+                enemy.setCanShoot(false);
                 Line redLine =
                         new Line(enemy.getPositionX() + 2 * enemy.getRadius(),
                                 enemy.getPositionY() + enemy.getRadius(), 640,
@@ -113,12 +114,19 @@ public class WindowView extends Application {
                     root.getChildren().add(redLine);
                 }
 
-                // Create a PauseTransition for a 0.5 second delay
-                PauseTransition pause =
-                        new PauseTransition(Duration.seconds(0.1));
-                pause.setOnFinished(e -> {
+                // Create a PauseTransition for a 0.05 second delay
+                PauseTransition pauseShoot =
+                        new PauseTransition(Duration.seconds(0.05));
+                pauseShoot.setOnFinished(e -> {
                     // Remove the red line after the delay
                     root.getChildren().remove(redLine);
+                });
+
+                PauseTransition pauseCanShoot =
+                        new PauseTransition(Duration.seconds(1));
+                pauseCanShoot.setOnFinished(e -> {
+                    enemy.setCanShoot(true);
+                    System.out.println("TESTTTTTT");
                 });
 
                 // TODO: Maybe their is a way to add this to the enemy class
@@ -141,7 +149,9 @@ public class WindowView extends Application {
                 }
 
                 // Start the PauseTransition
-                pause.play();
+                pauseShoot.play();
+                // Start the PauseTransition
+                pauseCanShoot.play();
             }
         });
 
