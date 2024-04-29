@@ -35,11 +35,11 @@ public class HeroTank extends Character implements Hero {
     }
 
     public double getPositionX() {
-        return positionX;
+        return this.positionX;
     }
 
     public double getPositionY() {
-        return positionY;
+        return this.positionY;
     }
 
     public ImageView getImageView() {return imageView;}
@@ -54,10 +54,12 @@ public class HeroTank extends Character implements Hero {
     // Setters
     public void setPositionX(double position) {
         this.positionX = position;
+        this.getImageView().setTranslateX(this.positionX);
     }
 
     public void setPositionY(double position) {
         this.positionY = position;
+        this.getImageView().setTranslateY(this.positionY);
     }
 
     private void setRadius(int radius) {

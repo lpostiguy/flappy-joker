@@ -35,6 +35,10 @@ public class WindowView extends Application {
     // Arraylist containing all the heroes
     private ArrayList<Character> heroes = new ArrayList<>();
     private long lastHeroTime = 0;
+
+    // Counter for a new teleportation
+    double tankLastTeleportTime = 0;
+
     private BorderPane root;
     private Stage primaryStage;
 
@@ -289,8 +293,7 @@ public class WindowView extends Application {
                         }
                         yOffset = 50 * Math.sin(now * 1e-9); // 50 pixels of amplitude
 
-                        // Counter for a new teleportation
-                        double tankLastTeleportTime = now;
+
 
                         Iterator<Character> characterIterator = heroes.iterator();
 
@@ -304,28 +307,31 @@ public class WindowView extends Application {
                                 // Calculate the new Y position with sinusoidal motion
                                 double newY = character.getPositionY() + yOffset;
 
-
-
                                 // TODO : Hitbox issue
                                 // Update the Y position of the character
-                                //character.setPositionY(newY);
 
                                 // Update the Y translation of the character's image view
                                 character.getImageView().setTranslateY(newY);
+                                //character.setPositionY(newY);
 
                             } else if (character instanceof HeroTank) { // TODO
-                                if ((now - tankLastTeleportTime) / 1e9 >= 0.5) {
+
+                                if ((now - tankLastTeleportTime) >= 500000000) {
+                                    System.out.println("AAAAAAAAAA");
+
                                     double newX = character.getPositionX() + Math.random() * 60 - 30; // Random x within range [-30, 30]
                                     double newY = character.getPositionY() + Math.random() * 60 - 30; // Random y within range [-30, 30]
 
                                     // Update the logical position of HeroTank
-                                    character.setPositionX(newX);
-                                    character.setPositionY(newY);
+                                    //
 
                                     // Update the visual translation of HeroTank
-                                    character.getImageView().setTranslateX(newX);
-                                    character.getImageView().setTranslateY(newY);
+                                    //character.getImageView().setTranslateX(newX);
+                                    //character.getImageView().setTranslateY(newY);
 
+
+                                    character.setPositionX(newX);
+                                    character.setPositionY(newY);
                                     tankLastTeleportTime = now; // Update last teleportation time
                                 }
                             }
