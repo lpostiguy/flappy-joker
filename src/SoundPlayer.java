@@ -4,11 +4,15 @@ import javazoom.jl.player.advanced.AdvancedPlayer;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Utility class for playing sound files.
  */
 public class SoundPlayer {
+
+    private static Map<String, Thread> soundThreads = new HashMap<>();
 
     /**
      * Plays a sound from the specified file path.
@@ -16,6 +20,9 @@ public class SoundPlayer {
      * @param filePath The path to the sound file.
      */
     public static void playSound(final String filePath) {
+        if (soundThreads.containsKey(filePath)) {
+            return; // If already playing, do nothing
+        }
 
         // Create a new thread to play the sound
         Thread soundThread = new Thread(new Runnable() {
@@ -41,5 +48,20 @@ public class SoundPlayer {
         });
         // Start the sound
         soundThread.start();
+        soundThreads.put(filePath, soundThread);
+    }
+
+    /**
+     * Stops the specified audio file.
+     *
+     * @param filePath The path to the sound file to stop.
+     */
+    public static void stopSound(String filePath) {
+        Thread soundThread = soundThreads.get(filePath);
+        if (soundThread != null && soundThread.isAlive()) {
+            soundThread.interrupt(); // Interrupt the sound thread
+            soundThreads.remove(filePath); // Remove the thread from the map
+        }
     }
 }
+

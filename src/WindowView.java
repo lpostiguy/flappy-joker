@@ -26,6 +26,7 @@ import java.util.Iterator;
 public class WindowView extends Application {
     private Enemy enemy = new Enemy();
     private boolean gameIsRunning = false;
+    private boolean soundPlaying = true;
     private long lastTime = 0; // Variable for the animation
 
     // Arraylist containing all the coins
@@ -202,7 +203,20 @@ public class WindowView extends Application {
         enemy.getImageView().setTranslateX(enemy.getPositionX());
 
         rootGame.getChildren().add(enemy.getImageView());
-        //rootGame.getChildren().add(coin.getImageView());
+
+        /* FIX THISSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+        if (!gameIsRunning && soundPlaying) {
+            SoundPlayer.playSound("src/assets/soundEffects/creepyMusic.mp3");
+            System.out.println("TEST SOUND PLAYING");
+            soundPlaying = false;
+        }
+        if (!soundPlaying) {
+            SoundPlayer.stopSound("src/assets/soundEffects/creepyMusic.mp3");
+            System.out.println("TEST SOUND NOTTTTTT PLAYING");
+            soundPlaying = true;
+        }
+
+         */
 
 
         AnimationTimer timer = new AnimationTimer() {
