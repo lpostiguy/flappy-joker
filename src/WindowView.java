@@ -25,7 +25,7 @@ import java.util.Iterator;
 
 public class WindowView extends Application {
     private Enemy enemy = new Enemy();
-    private boolean gameIsRunning = true;
+    private boolean gameIsRunning = false;
     private long lastTime = 0; // Variable for the animation
 
     // Arraylist containing all the coins
@@ -38,34 +38,76 @@ public class WindowView extends Application {
 
     // Counter for a new teleportation
     double tankLastTeleportTime = 0;
-
-    private BorderPane root;
+    private BorderPane rootGame;
+    private BorderPane rootMenu;
     private Stage primaryStage;
-
     private Stage gameOverStage;
-
 
     @Override
     public void start(Stage primaryStage) {
-        this.primaryStage = primaryStage;  // Initialize primaryStage here
-        root = new BorderPane();  // Initialize root here
+        this.primaryStage = primaryStage;
+        rootGame = new BorderPane();
+        rootMenu = new BorderPane();
 
-        Scene scene = new Scene(root, 640, 440);
-        primaryStage.setTitle("Flappy Enemy");
+        // Initialize the Game scene
+        Scene gameScene = new Scene(rootGame, 640, 440);
+        // Initialize the Menu scene
+        Scene menuScene = new Scene(rootMenu, 640, 440);
 
-        // Load the background image
+        // Set by default the menu Scene
+        primaryStage.setScene(menuScene);
+        primaryStage.show();
+
+
+        // Load the background image for the Menu scene
+        Image menuBackgroundImage = new Image("/assets/images/JokerBg.png");
+        ImageView menuImageView = new ImageView(menuBackgroundImage);
+
+        rootMenu.getChildren().add(menuImageView);
+
+        VBox mainMenuBox = new VBox();
+        mainMenuBox.setPadding(new Insets(0,0,100,50));
+        mainMenuBox.setAlignment(Pos.CENTER_LEFT);
+
+        Label unoReverseTitle = new Label("UNO Reverse Flappy");
+        unoReverseTitle.setStyle("-fx-text-fill: #61355C; -fx-font-size: 30px;" +
+                " -fx-font-weight: bold");
+        unoReverseTitle.setPadding(new Insets(0, 0, 100, 0));
+
+
+        Button startButton = new Button("Start Game");
+        startButton.setPadding(new Insets(10, 20, 10, 20));
+        startButton.setStyle("-fx-background-color: #4CAE25; -fx-text-fill: " +
+                "black; -fx-background-radius: 10; -fx-font-size: 16px; " +
+                "-fx-font-weight: bold");
+        startButton.setMinWidth(120);
+        startButton.setOnAction(e -> {
+            gameIsRunning = true;
+            primaryStage.setScene(gameScene);
+        });
+
+// Add the button and title to the mainMenuBox
+        mainMenuBox.getChildren().addAll(unoReverseTitle, startButton);
+
+// Add mainMenuBox to rootMenu
+        rootMenu.setCenter(mainMenuBox);
+
+
+
+        // Load the background image for the game scene
         Image backgroundImage = new Image("/assets/images/Bg.png");
         ImageView backgroundView1 = new ImageView(backgroundImage);
         ImageView backgroundView2 = new ImageView(backgroundImage);
         backgroundView2.setTranslateX(backgroundImage.getWidth());
 
+
         Pane backgrounds = new Pane();
         backgrounds.getChildren().addAll(backgroundView1, backgroundView2);
-        root.getChildren().add(backgrounds);
+        rootGame.getChildren().add(backgrounds);
 
         HBox bottomGameInfo = new HBox();
         bottomGameInfo.setPadding(new Insets(10, 0, 10, 0));
-        bottomGameInfo.setPrefWidth(scene.getWidth());
+        bottomGameInfo.setPrefWidth(gameScene.getWidth());
         BackgroundFill backgroundFill = new BackgroundFill(Color.WHITE,
                 CornerRadii.EMPTY, Insets.EMPTY);
         bottomGameInfo.setBackground(new Background(backgroundFill));
@@ -80,8 +122,8 @@ public class WindowView extends Application {
             pauseButton.setText(gameIsRunning ? "Pause" : "Resume");
         });
 
-        VBox buttonBox = new VBox(pauseButton);
-        buttonBox.setPadding(new Insets(0, 10, 0, 10));
+        VBox pauseButtonBox = new VBox(pauseButton);
+        pauseButtonBox.setPadding(new Insets(0, 10, 0, 10));
 
         Label lifeText = new Label("Life: " + enemy.getHealth());
         lifeText.setFont(Font.font("Arial", 16));
@@ -91,17 +133,14 @@ public class WindowView extends Application {
         coinText.setFont(Font.font("Arial", 16));
         coinText.setPadding(new Insets(0, 10, 0, 10));
 
-        bottomGameInfo.getChildren().addAll(buttonBox,
+        bottomGameInfo.getChildren().addAll(pauseButtonBox,
                 new Separator(Orientation.VERTICAL), lifeText,
                 new Separator(Orientation.VERTICAL), coinText);
         bottomGameInfo.setAlignment(Pos.CENTER);
-        root.setBottom(bottomGameInfo);
-
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        rootGame.setBottom(bottomGameInfo);
 
 
-        scene.setOnKeyPressed(event -> {
+        gameScene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.SPACE) {
                 enemy.setJumping(true);
             } else if (event.getCode() == KeyCode.E && enemy.getCanShoot()) {
@@ -114,8 +153,8 @@ public class WindowView extends Application {
                 redLine.setStroke(Color.RED);
                 redLine.setStrokeWidth(2);
 
-                if (!root.getChildren().contains(redLine)) {
-                    root.getChildren().add(redLine);
+                if (!rootGame.getChildren().contains(redLine)) {
+                    rootGame.getChildren().add(redLine);
                 }
 
                 // Create a PauseTransition for a 0.05 second delay
@@ -123,14 +162,13 @@ public class WindowView extends Application {
                         new PauseTransition(Duration.seconds(0.05));
                 pauseShoot.setOnFinished(e -> {
                     // Remove the red line after the delay
-                    root.getChildren().remove(redLine);
+                    rootGame.getChildren().remove(redLine);
                 });
 
                 PauseTransition pauseCanShoot =
                         new PauseTransition(Duration.seconds(1));
                 pauseCanShoot.setOnFinished(e -> {
                     enemy.setCanShoot(true);
-                    System.out.println("TESTTTTTT");
                 });
 
                 // TODO: Maybe their is a way to add this to the enemy class
@@ -140,9 +178,9 @@ public class WindowView extends Application {
                     Character character = characterIterator.next();
                     System.out.println(character);
                     if (enemy.getPositionY() <= character.getPositionY() + character.getRadius() &&
-                        enemy.getPositionY() >= character.getPositionY() - character.getRadius() ) {
+                            enemy.getPositionY() >= character.getPositionY() - character.getRadius()) {
                         // Remove the hero from the game
-                        root.getChildren().remove(character.getImageView());
+                        rootGame.getChildren().remove(character.getImageView());
 
                         // Give the loot to the enemy
                         enemy.setCoinCollected(character.getCoinDropAmount());
@@ -163,12 +201,14 @@ public class WindowView extends Application {
         // X Position of the joker
         enemy.getImageView().setTranslateX(enemy.getPositionX());
 
-        root.getChildren().add(enemy.getImageView());
-        //root.getChildren().add(coin.getImageView());
+        rootGame.getChildren().add(enemy.getImageView());
+        //rootGame.getChildren().add(coin.getImageView());
 
 
         AnimationTimer timer = new AnimationTimer() {
-            double yOffset = 0; // For the sinusoidal movement of the furtive heroes
+            double yOffset = 0; // For the sinusoidal movement of the
+            // furtive heroes
+
             @Override
             public void handle(long now) {
                 if (gameIsRunning) {
@@ -177,7 +217,8 @@ public class WindowView extends Application {
                         // Frame and speed calculations
                         double deltaTime = (now - lastTime) / 1e9;
                         double moveSpeedPerSecond = enemy.getHorizontalSpeed();
-                        double moveSpeedPerFrame = moveSpeedPerSecond * deltaTime;
+                        double moveSpeedPerFrame =
+                                moveSpeedPerSecond * deltaTime;
 
 
                         // Enemy jumping mechanic
@@ -207,8 +248,8 @@ public class WindowView extends Application {
                             coin.getImageView().setTranslateX(coin.getPositionX());
                             // Y Position of the coin image
                             coin.getImageView().setTranslateY(coin.getPositionY());
-                            root.getChildren().add(coin.getImageView()); //
-                            // Add it to the root
+                            rootGame.getChildren().add(coin.getImageView()); //
+                            // Add it to the rootGame
 
                             coins.add(coin);
                             lastCoinTime = now; // Update the last coin time
@@ -227,7 +268,7 @@ public class WindowView extends Application {
                             // If the coin gets out of the screen to the
                             // left, remove it from the ArrayList
                             if (coin.getPositionX() + coin.getRadius() * 2 <= 0) {
-                                root.getChildren().remove(coin.getImageView()); // Remove from the scene graph
+                                rootGame.getChildren().remove(coin.getImageView()); // Remove from the scene graph
                                 iterator.remove(); // Remove from the list
                             }
 
@@ -240,7 +281,7 @@ public class WindowView extends Application {
                                     coin.getPositionY() <= enemy.getPositionY() + enemy.getRadius() * 2 &&
                                     coin.getPositionY() >= enemy.getPositionY() - enemy.getRadius() * 2) {
 
-                                root.getChildren().remove(coin.getImageView()); // Remove from the scene graph
+                                rootGame.getChildren().remove(coin.getImageView()); // Remove from the scene graph
                                 iterator.remove(); // Remove from the list
 
                                 // Add the coin to the counter and update it
@@ -264,7 +305,7 @@ public class WindowView extends Application {
                                 melee.getImageView().setTranslateX(melee.getPositionX());
                                 // Y Position of the melee Hero
                                 melee.getImageView().setTranslateY(melee.getPositionY());
-                                root.getChildren().add(melee.getImageView()); // Add it to the root
+                                rootGame.getChildren().add(melee.getImageView()); // Add it to the root
 
                                 heroes.add(melee);
                             } else if (randomHeroType == 1) {
@@ -274,7 +315,7 @@ public class WindowView extends Application {
                                 furtif.getImageView().setTranslateX(furtif.getPositionX());
                                 // Y Position of the melee Hero
                                 furtif.getImageView().setTranslateY(furtif.getPositionY());
-                                root.getChildren().add(furtif.getImageView()); // Add it to the root
+                                rootGame.getChildren().add(furtif.getImageView()); // Add it to the root
 
                                 heroes.add(furtif);
                             } else {
@@ -283,7 +324,7 @@ public class WindowView extends Application {
                                 tank.getImageView().setTranslateX(tank.getPositionX());
                                 // Y Position of the melee Hero
                                 tank.getImageView().setTranslateY(tank.getPositionY());
-                                root.getChildren().add(tank.getImageView()); // Add it to the root
+                                rootGame.getChildren().add(tank.getImageView()); // Add it to the rootGame
 
                                 heroes.add(tank);
                             }
@@ -291,11 +332,12 @@ public class WindowView extends Application {
                             lastHeroTime = now; // Update lastHeroTime
 
                         }
-                        yOffset = 0.5 * Math.sin(now * 1e-9); // 50 pixels of amplitude
+                        yOffset = 0.5 * Math.sin(now * 1e-9); // 50 pixels
+                        // of amplitude
 
 
-
-                        Iterator<Character> characterIterator = heroes.iterator();
+                        Iterator<Character> characterIterator =
+                                heroes.iterator();
 
                         while (characterIterator.hasNext()) {
                             Character character = characterIterator.next();
@@ -303,24 +345,26 @@ public class WindowView extends Application {
                             character.getImageView().setTranslateX(character.getPositionX());
 
                             // Sinusoidal movement for furtive heroes
-                            if (character instanceof HeroFurtif){
+                            if (character instanceof HeroFurtif) {
                                 ((HeroFurtif) character).updatePosition(now);
 
 
                             } else if (character instanceof HeroTank) {
 
-                                // If the elasped time is greater than 500000000 ns = 0.5 seconds
+                                // If the elasped time is greater than
+                                // 500000000 ns = 0.5 seconds
                                 if ((now - tankLastTeleportTime) >= 500000000) {
 
                                     ((HeroTank) character).updatePosition();
-                                    tankLastTeleportTime = now; // Update last teleportation time
+                                    tankLastTeleportTime = now; // Update
+                                    // last teleportation time
                                 }
                             }
 
                             // If the Hero gets out of the screen to the left,
                             // remove it from the ArrayList
                             if (character.getPositionX() + character.getRadius() * 2 <= 0) {
-                                root.getChildren().remove(character.getImageView()); // Remove from the scene graph
+                                rootGame.getChildren().remove(character.getImageView()); // Remove from the scene graph
                                 characterIterator.remove(); // Remove from
                                 // the list
                             }
@@ -335,31 +379,32 @@ public class WindowView extends Application {
                                 // If the hero is melee type, the enemy
                                 // looses all HP
                                 if (character.getType().equals("melee")) {
-                                    enemy.setHealth(- character.getAttackDamage());
+                                    enemy.setHealth(-character.getAttackDamage());
                                     lifeText.setText("Life: " + enemy.getHealth());
                                     System.out.println("Flash: " + enemy.getHealth());
 
                                 } else if (character.getType().equals(
                                         "furtif")) {
                                     // Furtif type
-                                    enemy.setCoinCollected(- character.getCoinStealAmount());
+                                    enemy.setCoinCollected(-character.getCoinStealAmount());
                                     coinText.setText("Coins: " + enemy.getCoinCollected());
                                     System.out.println("Arrow: " + enemy.getCoinCollected());
                                 } else {
                                     // Tank type
-                                    enemy.setHealth(- character.getAttackDamage());
+                                    enemy.setHealth(-character.getAttackDamage());
                                     lifeText.setText("Life: " + enemy.getHealth());
                                     System.out.println("SUPERMAN: " + enemy.getHealth());
                                 }
 
-                                root.getChildren().remove(character.getImageView()); // Remove from the scene graph
+                                rootGame.getChildren().remove(character.getImageView()); // Remove from the scene graph
                                 characterIterator.remove(); // Remove from
                                 // the list
                             }
                             // Check if the game should end
                             if (!enemy.getIsAlive()) {
                                 gameIsRunning = false;
-                                SoundPlayer.playSound("src/assets/soundEffects" +
+                                SoundPlayer.playSound("src/assets" +
+                                        "/soundEffects" +
                                         "/gameOverSound" +
                                         ".mp3");
                                 showGameOverScreen();
@@ -393,15 +438,15 @@ public class WindowView extends Application {
             coinCollectedLabel.setFont(Font.font("Arial", 18));
             coinCollectedLabel.setTextFill(Color.WHITE);
 
-            // Restart button
-            Button restartButton = new Button("Restart");
-            restartButton.setPrefWidth(100);
-            restartButton.setPrefHeight(50);
-            restartButton.setStyle("-fx-font-size: 20px;");
-            restartButton.setOnAction(e -> restartGame());
+            // Back to Menu button
+            Button backToMenuButton = new Button("Back to Menu");
+            backToMenuButton.setPrefWidth(150);
+            backToMenuButton.setPrefHeight(50);
+            backToMenuButton.setStyle("-fx-font-size: 15px;");
+            backToMenuButton.setOnAction(e -> resetGame());
 
             gameOverScreen.getChildren().addAll(gameOverLabel,
-                    coinCollectedLabel, restartButton);
+                    coinCollectedLabel, backToMenuButton);
             gameOverScreen.setStyle("-fx-background-color: rgb(0, 0, 0)");
 
             Scene gameOverScene = new Scene(gameOverScreen, 400, 300);
@@ -412,16 +457,12 @@ public class WindowView extends Application {
         });
     }
 
-    private void restartGame() {
-        SoundPlayer.playSound("src/assets/soundEffects" +
-                "/gameStart" +
-                ".mp3");
+    private void resetGame() {
         enemy.resetEnemyStats();
         coins.clear();
         heroes.clear();
-        root.getChildren().clear();
+        rootGame.getChildren().clear();
         start(primaryStage);
-        gameIsRunning = true;
 
         // Close the game over pop-up
         if (gameOverStage != null) {

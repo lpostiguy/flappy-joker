@@ -1,12 +1,13 @@
 import javafx.scene.image.ImageView;
 
 /**
- * Abstract class representing a character in the game.
- * Used by Enemy, HeroTank, HeroFurtif and HeroMelee.
+ * Abstract class representing a character in the game. Used by Enemy,
+ * HeroTank, HeroFurtif and HeroMelee.
  */
 public abstract class Character {
     // Attributes
-    private boolean isAlive = true; // Flag indicating whether the character is alive
+    private boolean isAlive = true; // Flag indicating whether the character
+    // is alive
     private double positionX; // The x-coordinate position of the character
     private double positionY; // The y-coordinate position of the character
     private int radius; // The radius of the character

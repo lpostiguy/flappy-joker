@@ -4,8 +4,7 @@ import javafx.scene.image.ImageView;
 import java.util.Random;
 
 /**
- * Represents a tank hero character in the game.
- * Extends the Character class.
+ * Represents a tank hero character in the game. Extends the Character class.
  */
 public class HeroTank extends Character implements Hero {
 
@@ -13,7 +12,8 @@ public class HeroTank extends Character implements Hero {
     private double positionX; // The x-coordinate position of the tank hero
     private double positionY; // The y-coordinate position of the tank hero
     private int radius; // The radius of the tank hero
-    private final ImageView imageView; // The image view representing the tank hero
+    private final ImageView imageView; // The image view representing the
+    // tank hero
 
     // ************************************************************************
     // Constructor
@@ -91,7 +91,9 @@ public class HeroTank extends Character implements Hero {
      * @return The image view representing the tank hero.
      */
     @Override
-    public ImageView getImageView() {return imageView;}
+    public ImageView getImageView() {
+        return imageView;
+    }
 
     /**
      * Gets the type of the character.
@@ -162,11 +164,12 @@ public class HeroTank extends Character implements Hero {
     }
 
     /**
-     * Sets a random Y position within the specified scene size and image radius for the tank hero.
+     * Sets a random Y position within the specified scene size and image
+     * radius for the tank hero.
      *
-     * @param sceneSize    The size of the scene.
-     * @param imageRadius  The radius of the image.
-     * @return             The random Y position.
+     * @param sceneSize   The size of the scene.
+     * @param imageRadius The radius of the image.
+     * @return The random Y position.
      */
     public int setRandomPosition(int sceneSize, int imageRadius) {
         Random random = new Random();
@@ -178,13 +181,15 @@ public class HeroTank extends Character implements Hero {
     }
 
     /**
-     * Updates the position of the tank hero with random values between -30 and 30 pixels
-     * on the X and Y axes.
+     * Updates the position of the tank hero with random values between -30 and
+     * 30 pixels on the X and Y axes.
      */
     public void updatePosition() {
         // Calculate the new Y position using sinusoidal motion
-        double newX = this.getPositionX() + Math.random() * 60 - 30; // Random x within range [-30, 30]
-        double newY = this.getPositionY() + Math.random() * 60 - 30; // Random y within range [-30, 30]
+        double newX = this.getPositionX() + Math.random() * 60 - 30; //
+        // Random x within range [-30, 30]
+        double newY = this.getPositionY() + Math.random() * 60 - 30; //
+        // Random y within range [-30, 30]
 
         // Update the Y and X positions
         positionY = newY;

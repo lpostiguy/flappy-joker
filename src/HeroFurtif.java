@@ -4,8 +4,8 @@ import javafx.scene.image.ImageView;
 import java.util.Random;
 
 /**
- * Represents a stealthy hero character in the game.
- * Extends the Character class.
+ * Represents a stealthy hero character in the game. Extends the Character
+ * class.
  */
 public class HeroFurtif extends Character implements Hero {
 
@@ -13,7 +13,8 @@ public class HeroFurtif extends Character implements Hero {
     private double positionX; // The x-coordinate position of the stealthy hero
     private double positionY; // The y-coordinate position of the stealthy hero
     private int radius; // The radius of the stealthy hero
-    private final ImageView imageView; // The image view representing the stealthy hero
+    private final ImageView imageView; // The image view representing the
+    // stealthy hero
 
     // ************************************************************************
     // Constructor
@@ -167,11 +168,12 @@ public class HeroFurtif extends Character implements Hero {
     }
 
     /**
-     * Sets a random Y position within the specified scene size and image radius for the stealthy hero.
+     * Sets a random Y position within the specified scene size and image
+     * radius for the stealthy hero.
      *
-     * @param sceneSize    The size of the scene.
-     * @param imageRadius  The radius of the image.
-     * @return             The random Y position.
+     * @param sceneSize   The size of the scene.
+     * @param imageRadius The radius of the image.
+     * @return The random Y position.
      */
     public int setRandomPosition(int sceneSize, int imageRadius) {
         Random random = new Random();
@@ -189,7 +191,8 @@ public class HeroFurtif extends Character implements Hero {
      */
     public void updatePosition(double now) {
         // Calculate the new Y position using sinusoidal motion
-        double yOffset = 0.5 * Math.sin(now * 1e-9); // Adjust frequency and amplitude as needed
+        double yOffset = 0.5 * Math.sin(now * 1e-9); // Adjust frequency and
+        // amplitude as needed
         double newY = positionY + yOffset;
 
         // Update the Y position and the ImageView's translation

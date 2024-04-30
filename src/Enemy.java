@@ -2,8 +2,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 
 /**
- * Represents an Enemy character in the game.
- * Extends the Character class.
+ * Represents an Enemy character in the game. Extends the Character class.
  */
 public class Enemy extends Character {
 
@@ -11,16 +10,21 @@ public class Enemy extends Character {
 
     private int health = 100; // The health of the enemy
     private final int radius = 30; // The radius of the enemy
-    private int coinCollected = 0; // The number of coins collected by the enemy
+    private int coinCollected = 0; // The number of coins collected by the
+    // enemy
     private int horizontalSpeed = 120; // The horizontal speed of the enemy
     private int verticalSpeed = 0; // The vertical speed of the enemy
-    private int gravityAcceleration = 170; // The gravity acceleration applied to the enemy
-    private int startGravityAcceleration = 170; // The initial gravity acceleration
+    private int gravityAcceleration = 170; // The gravity acceleration
+    // applied to the enemy
+    private int startGravityAcceleration = 170; // The initial gravity
+    // acceleration
     private double positionX; // The x-coordinate position of the enemy
     private double positionY; // The y-coordinate position of the enemy
-    private boolean canShoot = true; // Flag indicating whether the enemy can shoot
+    private boolean canShoot = true; // Flag indicating whether the enemy
+    // can shoot
     private final ImageView imageView; // The image view representing the enemy
-    private boolean isJumping = false; // Flag indicating whether the enemy is jumping
+    private boolean isJumping = false; // Flag indicating whether the enemy
+    // is jumping
     private boolean canJump = true; // Flag to control jump initiation
 
     //Constructor
@@ -164,7 +168,7 @@ public class Enemy extends Character {
      * @return The type of the character -> Enemy.
      */
     @Override
-    public String getType(){
+    public String getType() {
         return "Enemy";
     }
 
@@ -181,8 +185,8 @@ public class Enemy extends Character {
     }
 
     /**
-     * Sets the health of the enemy.
-     * If the health becomes lower than 0, sets the heath at 0.
+     * Sets the health of the enemy. If the health becomes lower than 0, sets
+     * the heath at 0.
      *
      * @param health The health value to set.
      */
@@ -194,8 +198,8 @@ public class Enemy extends Character {
     }
 
     /**
-     * Sets the number of coins collected by the enemy.
-     * If the amount of coins collected are lower than 0, sets it to 0.
+     * Sets the number of coins collected by the enemy. If the amount of coins
+     * collected are lower than 0, sets it to 0.
      *
      * @param coinCollected The number of coins collected.
      */
@@ -213,7 +217,8 @@ public class Enemy extends Character {
             this.horizontalSpeed += 10;
             System.out.println(this.coinCollected);
 
-            // Easter egg : if the enemy gets 21, 25, or 2125 coins (Robin teaches
+            // Easter egg : if the enemy gets 21, 25, or 2125 coins (Robin
+            // teaches
             // the IFT2125 class), then a message is printed in the console.
             if (this.coinCollected == 21) {
                 System.out.println("Merci");
@@ -222,7 +227,8 @@ public class Enemy extends Character {
                 System.out.println("Robin\nMERCI FULL ROBIN");
             }
             if (this.coinCollected == 2125) {
-                System.out.println("MERCI ROBIN OMG SO GOOD!! THOU ART THE BEST");
+                System.out.println("MERCI ROBIN OMG SO GOOD!! THOU ART THE " +
+                        "BEST");
             }
         }
     }
@@ -296,7 +302,8 @@ public class Enemy extends Character {
     }
 
     /**
-     * Adjusts the gravity acceleration based on the number of coins collected.
+     * Adjusts the gravity acceleration based on the number of coins
+     * collected.
      */
     public void ajustGravity() {
         this.gravityAcceleration =

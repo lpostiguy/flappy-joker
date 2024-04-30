@@ -4,16 +4,18 @@ import javafx.scene.image.ImageView;
 import java.util.Random;
 
 /**
- * Represents a melee hero character in the game.
- * Extends the Character class.
+ * Represents a melee hero character in the game. Extends the Character class.
  */
 public class HeroMelee extends Character implements Hero {
 
     // Attributes
-    private double positionX;           // The x-coordinate position of the melee hero
-    private double positionY;           // The y-coordinate position of the melee hero
+    private double positionX;           // The x-coordinate position of the
+    // melee hero
+    private double positionY;           // The y-coordinate position of the
+    // melee hero
     private int radius;                 // The radius of the melee hero
-    private final ImageView imageView;  // The image view representing the melee hero
+    private final ImageView imageView;  // The image view representing the
+    // melee hero
 
     // ************************************************************************
     // Constructor
@@ -30,11 +32,13 @@ public class HeroMelee extends Character implements Hero {
 
         // Set initial position
         this.positionX = 640 + getRadius();
-        this.positionY = setRandomPosition(360, getRadius()); // Y is randomized
+        this.positionY = setRandomPosition(360, getRadius()); // Y is
+        // randomized
     }
 
     // ************************************************************************
     // Getters
+
     /**
      * Gets the attack damage dealt by the melee hero.
      *
@@ -164,11 +168,12 @@ public class HeroMelee extends Character implements Hero {
     }
 
     /**
-     * Sets a random Y position within the specified scene size and image radius for the melee hero.
+     * Sets a random Y position within the specified scene size and image
+     * radius for the melee hero.
      *
-     * @param sceneSize    The size of the scene.
-     * @param imageRadius  The radius of the image.
-     * @return             The random Y position.
+     * @param sceneSize   The size of the scene.
+     * @param imageRadius The radius of the image.
+     * @return The random Y position.
      */
     public int setRandomPosition(int sceneSize, int imageRadius) {
         Random random = new Random();
