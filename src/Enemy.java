@@ -3,7 +3,7 @@ import javafx.scene.image.Image;
 
 /**
  * Represents an Enemy character in the game.
- * It extends the Character class.
+ * Extends the Character class.
  */
 public class Enemy extends Character {
 
@@ -46,6 +46,7 @@ public class Enemy extends Character {
      *
      * @return The image view representing the enemy.
      */
+    @Override
     public ImageView getImageView() {
         return imageView;
     }
@@ -64,6 +65,7 @@ public class Enemy extends Character {
      *
      * @return The x-coordinate position of the enemy.
      */
+    @Override
     public double getPositionX() {
         return positionX;
     }
@@ -73,6 +75,7 @@ public class Enemy extends Character {
      *
      * @return The y-coordinate position of the enemy.
      */
+    @Override
     public double getPositionY() {
         return positionY;
     }
@@ -91,6 +94,7 @@ public class Enemy extends Character {
      *
      * @return The horizontal speed of the enemy.
      */
+    @Override
     public int getHorizontalSpeed() {
         return horizontalSpeed;
     }
@@ -152,6 +156,16 @@ public class Enemy extends Character {
      */
     public boolean getCanShoot() {
         return canShoot;
+    }
+
+    /**
+     * Gets the type of the character.
+     *
+     * @return The type of the character -> Enemy.
+     */
+    @Override
+    public String getType(){
+        return "Enemy";
     }
 
     // ************************************************************************
@@ -245,6 +259,7 @@ public class Enemy extends Character {
      *
      * @param position The y-coordinate position to set.
      */
+    @Override
     public void setPositionY(double position) {
         this.positionY = position;
     }

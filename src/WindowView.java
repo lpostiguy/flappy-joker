@@ -335,19 +335,19 @@ public class WindowView extends Application {
                                 // If the hero is melee type, the enemy
                                 // looses all HP
                                 if (character.getType().equals("melee")) {
-                                    enemy.setHealth(-100);
+                                    enemy.setHealth(- character.getAttackDamage());
                                     lifeText.setText("Life: " + enemy.getHealth());
                                     System.out.println("Flash: " + enemy.getHealth());
 
                                 } else if (character.getType().equals(
                                         "furtif")) {
                                     // Furtif type
-                                    enemy.setCoinCollected(-10);
+                                    enemy.setCoinCollected(- character.getCoinStealAmount());
                                     coinText.setText("Coins: " + enemy.getCoinCollected());
                                     System.out.println("Arrow: " + enemy.getCoinCollected());
                                 } else {
                                     // Tank type
-                                    enemy.setHealth(-50);
+                                    enemy.setHealth(- character.getAttackDamage());
                                     lifeText.setText("Life: " + enemy.getHealth());
                                     System.out.println("SUPERMAN: " + enemy.getHealth());
                                 }
