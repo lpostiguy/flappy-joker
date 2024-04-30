@@ -26,7 +26,6 @@ import java.util.Iterator;
 public class WindowView extends Application {
     private Enemy enemy = new Enemy();
     private boolean gameIsRunning = false;
-    private boolean soundPlaying = true;
     private long lastTime = 0; // Variable for the animation
 
     // Arraylist containing all the coins
@@ -58,6 +57,7 @@ public class WindowView extends Application {
         // Set by default the menu Scene
         primaryStage.setScene(menuScene);
         primaryStage.show();
+        updateMusic();
 
 
         // Load the background image for the Menu scene
@@ -85,6 +85,7 @@ public class WindowView extends Application {
         startButton.setOnAction(e -> {
             gameIsRunning = true;
             primaryStage.setScene(gameScene);
+            updateMusic();
         });
 
 // Add the button and title to the mainMenuBox
@@ -203,20 +204,6 @@ public class WindowView extends Application {
         enemy.getImageView().setTranslateX(enemy.getPositionX());
 
         rootGame.getChildren().add(enemy.getImageView());
-
-        /* FIX THISSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
-        if (!gameIsRunning && soundPlaying) {
-            SoundPlayer.playSound("src/assets/soundEffects/creepyMusic.mp3");
-            System.out.println("TEST SOUND PLAYING");
-            soundPlaying = false;
-        }
-        if (!soundPlaying) {
-            SoundPlayer.stopSound("src/assets/soundEffects/creepyMusic.mp3");
-            System.out.println("TEST SOUND NOTTTTTT PLAYING");
-            soundPlaying = true;
-        }
-
-         */
 
 
         AnimationTimer timer = new AnimationTimer() {
@@ -457,7 +444,10 @@ public class WindowView extends Application {
             backToMenuButton.setPrefWidth(150);
             backToMenuButton.setPrefHeight(50);
             backToMenuButton.setStyle("-fx-font-size: 15px;");
-            backToMenuButton.setOnAction(e -> resetGame());
+            backToMenuButton.setOnAction(e -> {
+                resetGame();
+                updateMusic(); // Stop music when game is over
+            });
 
             gameOverScreen.getChildren().addAll(gameOverLabel,
                     coinCollectedLabel, backToMenuButton);
@@ -481,6 +471,16 @@ public class WindowView extends Application {
         // Close the game over pop-up
         if (gameOverStage != null) {
             gameOverStage.close();
+        }
+    }
+
+    private void updateMusic() {
+        if (gameIsRunning) {
+            SoundPlayer.stopSound("src/assets/soundEffects/creepyMusic.mp3");
+            System.out.println("Music stopped because the game is running.");
+        } else {
+            SoundPlayer.playSound("src/assets/soundEffects/creepyMusic.mp3");
+            System.out.println("Music playing because the game is not running.");
         }
     }
 
