@@ -355,4 +355,32 @@ public class Enemy extends Character {
         this.canJump = true;
         this.canShoot = true;
     }
+
+    /**
+     * Checks if the enemy intersects with another character.
+     *
+     * @param other The other character to check intersection with.
+     * @return True if this character intersects with the other character, false otherwise.
+     */
+    public boolean characterIntersect ( Character other ){
+        double dx = this.positionX - other.getPositionX();
+        double dy = this.positionY - other.getPositionY();
+        double dSquare = dx * dx + dy * dy;
+
+        return dSquare < ( this.radius + other.getRadius() )*( this.radius + other.getRadius() );
+    }
+
+    /**
+     * Checks if the enemy intersects with a coin.
+     *
+     * @param coin The coin to check intersection with.
+     * @return True if this character intersects with the coin, false otherwise.
+     */
+    public boolean coinIntersect ( Coin coin ){
+        double dx = this.positionX - coin.getPositionX();
+        double dy = this.positionY - coin.getPositionY();
+        double dSquare = dx * dx + dy * dy;
+
+        return dSquare < ( this.radius + coin.getRadius() )*( this.radius + coin.getRadius() );
+    }
 }
