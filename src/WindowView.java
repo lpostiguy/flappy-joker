@@ -277,10 +277,7 @@ public class WindowView extends Application {
                             // the screen and add it to the coin counter
                             // All the conditions to verify if the coins is
                             // in the enemy's hitbox
-                            if (coin.getPositionX() <= enemy.getPositionX() + enemy.getRadius() * 2 &&
-                                    coin.getPositionX() >= enemy.getPositionX() - enemy.getRadius() * 2 &&
-                                    coin.getPositionY() <= enemy.getPositionY() + enemy.getRadius() * 2 &&
-                                    coin.getPositionY() >= enemy.getPositionY() - enemy.getRadius() * 2) {
+                            if (enemy.coinIntersect(coin)) {
 
                                 rootGame.getChildren().remove(coin.getImageView()); // Remove from the scene graph
                                 iterator.remove(); // Remove from the list
@@ -372,10 +369,7 @@ public class WindowView extends Application {
 
                             // All the conditions to verify if the coins is
                             // in the enemy's hitbox
-                            if (character.getPositionX() <= enemy.getPositionX() + enemy.getRadius() * 2 &&
-                                    character.getPositionX() >= enemy.getPositionX() - enemy.getRadius() * 2 &&
-                                    character.getPositionY() <= enemy.getPositionY() + enemy.getRadius() * 2 &&
-                                    character.getPositionY() >= enemy.getPositionY() - enemy.getRadius() * 2) {
+                            if (enemy.characterIntersect(character)) {
 
                                 // If the hero is melee type, the enemy
                                 // looses all HP

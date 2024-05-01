@@ -35,6 +35,11 @@ public class SoundPlayer {
         }
     }
 
+    /**
+     * Plays the sound effect located at the specified file path.
+     * If a sound is already playing from the same file path, it stops the previous sound and plays the new one.
+     * @param filePath The file path of the sound effect to be played.
+     */
     public static void stopSound(String filePath) {
         AdvancedPlayer player = players.get(filePath);
         if (player != null) {
