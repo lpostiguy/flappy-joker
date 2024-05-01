@@ -16,7 +16,7 @@ public class Enemy extends Character {
     private int verticalSpeed = 0; // The vertical speed of the enemy
     private int gravityAcceleration = 170; // The gravity acceleration
     // applied to the enemy
-    private int startGravityAcceleration = 170; // The initial gravity
+    private int startGravityAcceleration = 500; // The initial gravity
     // acceleration
     private double positionX; // The x-coordinate position of the enemy
     private double positionY; // The y-coordinate position of the enemy
@@ -215,7 +215,6 @@ public class Enemy extends Character {
             SoundPlayer.playSound("src/assets/soundEffects/collectCoin.mp3");
             ajustGravity();
             this.horizontalSpeed += 10;
-            System.out.println(this.coinCollected);
 
             // Easter egg : if the enemy gets 21, 25, or 2125 coins (Robin
             // teaches

@@ -19,10 +19,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * The main class representing the game window view.
+ */
 public class WindowView extends Application {
     private Enemy enemy = new Enemy();
     private boolean gameIsRunning = false;
@@ -38,11 +40,17 @@ public class WindowView extends Application {
 
     // Counter for a new teleportation
     double tankLastTeleportTime = 0;
+
     private BorderPane rootGame;
     private BorderPane rootMenu;
     private Stage primaryStage;
     private Stage gameOverStage;
 
+    /**
+     * The entry point for the JavaFX application.
+     *
+     * @param primaryStage The primary stage for this application, onto which the application scene can be set.
+     */
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -88,10 +96,10 @@ public class WindowView extends Application {
             updateMusic();
         });
 
-// Add the button and title to the mainMenuBox
+        // Add the button and title to the mainMenuBox
         mainMenuBox.getChildren().addAll(unoReverseTitle, startButton);
 
-// Add mainMenuBox to rootMenu
+        // Add mainMenuBox to rootMenu
         rootMenu.setCenter(mainMenuBox);
 
 
@@ -173,12 +181,10 @@ public class WindowView extends Application {
                     enemy.setCanShoot(true);
                 });
 
-                // TODO: Maybe their is a way to add this to the enemy class
                 // Killing heroes
                 Iterator<Character> characterIterator = heroes.iterator();
                 while (characterIterator.hasNext()) {
                     Character character = characterIterator.next();
-                    System.out.println(character);
                     if (enemy.getPositionY() <= character.getPositionY() + character.getRadius() &&
                             enemy.getPositionY() >= character.getPositionY() - character.getRadius()) {
                         // Remove the hero from the game
@@ -254,8 +260,6 @@ public class WindowView extends Application {
 
                             coins.add(coin);
                             lastCoinTime = now; // Update the last coin time
-                            //System.out.println("Length of coin array : " +
-                            // coins.size());
                         }
 
                         // Iterator to be able to remove coins from the
@@ -287,7 +291,7 @@ public class WindowView extends Application {
                                 coinText.setText("Coins: " + enemy.getCoinCollected());
                             }
                         }
-                        //*
+
                         // Spawns a Hero every 3 seconds, adding it to the
                         // hero Arraylist
 
@@ -330,8 +334,7 @@ public class WindowView extends Application {
                             lastHeroTime = now; // Update lastHeroTime
 
                         }
-                        yOffset = 0.5 * Math.sin(now * 1e-9); // 50 pixels
-                        // of amplitude
+                        yOffset = 0.5 * Math.sin(now * 1e-9); // 50 pixels of amplitude
 
 
                         Iterator<Character> characterIterator =
@@ -376,19 +379,16 @@ public class WindowView extends Application {
                                 if (character.getType().equals("melee")) {
                                     enemy.setHealth(-character.getAttackDamage());
                                     lifeText.setText("Life: " + enemy.getHealth());
-                                    System.out.println("Flash: " + enemy.getHealth());
 
                                 } else if (character.getType().equals(
                                         "furtif")) {
                                     // Furtif type
                                     enemy.setCoinCollected(-character.getCoinStealAmount());
                                     coinText.setText("Coins: " + enemy.getCoinCollected());
-                                    System.out.println("Arrow: " + enemy.getCoinCollected());
                                 } else {
                                     // Tank type
                                     enemy.setHealth(-character.getAttackDamage());
                                     lifeText.setText("Life: " + enemy.getHealth());
-                                    System.out.println("SUPERMAN: " + enemy.getHealth());
                                 }
 
                                 rootGame.getChildren().remove(character.getImageView()); // Remove from the scene graph
@@ -414,7 +414,9 @@ public class WindowView extends Application {
         timer.start();
     }
 
-
+    /**
+     * Show the game-over screen.
+     */
     private void showGameOverScreen() {
         gameIsRunning = false; // Stop the game loop or any other updates
 
@@ -439,8 +441,9 @@ public class WindowView extends Application {
             backToMenuButton.setPrefHeight(50);
             backToMenuButton.setStyle("-fx-font-size: 15px;");
             backToMenuButton.setOnAction(e -> {
+                // Stop music when game is over
                 resetGame();
-                updateMusic(); // Stop music when game is over
+                updateMusic();
             });
 
             gameOverScreen.getChildren().addAll(gameOverLabel,
@@ -455,6 +458,9 @@ public class WindowView extends Application {
         });
     }
 
+    /**
+     * Reset the game.
+     */
     private void resetGame() {
         enemy.resetEnemyStats();
         coins.clear();
@@ -468,17 +474,14 @@ public class WindowView extends Application {
         }
     }
 
+    /**
+     * Update the game music.
+     */
     private void updateMusic() {
         if (gameIsRunning) {
             SoundPlayer.stopSound("src/assets/soundEffects/creepyMusic.mp3");
-            System.out.println("Music stopped because the game is running.");
         } else {
             SoundPlayer.playSound("src/assets/soundEffects/creepyMusic.mp3");
-            System.out.println("Music playing because the game is not running.");
         }
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }
