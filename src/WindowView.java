@@ -279,8 +279,7 @@ public class WindowView extends Application {
 
                             // If the enemy gets the coin, remove it from
                             // the screen and add it to the coin counter
-                            // All the conditions to verify if the coins is
-                            // in the enemy's hitbox
+                            // If the coins is in the enemy's hitbox :
                             if (enemy.coinIntersect(coin)) {
 
                                 rootGame.getChildren().remove(coin.getImageView()); // Remove from the scene graph
@@ -357,8 +356,7 @@ public class WindowView extends Application {
                                 if ((now - tankLastTeleportTime) >= 500000000) {
 
                                     ((HeroTank) character).updatePosition();
-                                    tankLastTeleportTime = now; // Update
-                                    // last teleportation time
+                                    tankLastTeleportTime = now; // Update last teleportation time
                                 }
                             }
 
@@ -366,22 +364,19 @@ public class WindowView extends Application {
                             // remove it from the ArrayList
                             if (character.getPositionX() + character.getRadius() * 2 <= 0) {
                                 rootGame.getChildren().remove(character.getImageView()); // Remove from the scene graph
-                                characterIterator.remove(); // Remove from
-                                // the list
+                                characterIterator.remove(); // Remove from the list
                             }
 
-                            // All the conditions to verify if the coins is
-                            // in the enemy's hitbox
+                            // If the hero is in the enemy's hitbox
                             if (enemy.characterIntersect(character)) {
 
                                 // If the hero is melee type, the enemy
                                 // looses all HP
-                                if (character.getType().equals("melee")) {
+                                if (character instanceof HeroMelee) {
                                     enemy.setHealth(-character.getAttackDamage());
                                     lifeText.setText("Life: " + enemy.getHealth());
 
-                                } else if (character.getType().equals(
-                                        "furtif")) {
+                                } else if (character instanceof HeroFurtif) {
                                     // Furtif type
                                     enemy.setCoinCollected(-character.getCoinStealAmount());
                                     coinText.setText("Coins: " + enemy.getCoinCollected());
@@ -392,8 +387,7 @@ public class WindowView extends Application {
                                 }
 
                                 rootGame.getChildren().remove(character.getImageView()); // Remove from the scene graph
-                                characterIterator.remove(); // Remove from
-                                // the list
+                                characterIterator.remove(); // Remove from the list
                             }
                             // Check if the game should end
                             if (!enemy.getIsAlive()) {
