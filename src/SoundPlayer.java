@@ -4,8 +4,10 @@ import javazoom.jl.player.advanced.AdvancedPlayer;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Utility class for playing sound effects in the game.
+ */
 public class SoundPlayer {
     private static ConcurrentHashMap<String, AdvancedPlayer> players = new ConcurrentHashMap<>();
 
