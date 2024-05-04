@@ -5,7 +5,7 @@ import java.util.Random;
 
 /**
  * Represents a stealthy hero character in the game. Extends the Character
- * class.
+ * class. This hero removes coins from the enemy.
  */
 public class HeroFurtif extends Character implements Hero {
 
@@ -147,7 +147,8 @@ public class HeroFurtif extends Character implements Hero {
      *
      * @param radius The radius to set.
      */
-    private void setRadius(int radius) {
+    @Override
+    public void setRadius(int radius) {
         this.radius = radius;
     }
 
@@ -180,7 +181,7 @@ public class HeroFurtif extends Character implements Hero {
 
         int maxY = sceneSize - imageRadius;
 
-        // Generate random position Y within the calculated range
+        // Generates random position Y within the calculated range
         return random.nextInt(maxY - imageRadius + 1) + imageRadius;
     }
 

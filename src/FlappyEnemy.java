@@ -1,42 +1,29 @@
+import javafx.application.Application;
+
 /**
- * IFT 1025 - TP2 - Flappy Enemy
- * Authors :
- *      Louis-Philippe Ostiguy (20274034)
- *      Noah Tremblay Taillon (20190661)
- * Date : May 1, 2024
- *
- * This program is a game where you, the player, incarnate the Joker. The goal is
- * to collect as many coins as possible, while killing of avoiding the heroes
- * trying to defeat you. To do that, you have a gun to shoot the heroes, and you
- * can 'fly', flappy bird style.
- *
+ * IFT 1025 - TP2 - Flappy Enemy Authors : Louis-Philippe Ostiguy (20274034)
+ * Noah Tremblay Taillon (20190661) Date : May 3, 2024
+ * <p>
+ * This program is a game where you, the player, incarnate the Joker. The goal
+ * is to collect as many coins as possible, while killing of avoiding the
+ * heroes trying to defeat you. To do that, you have a gun to shoot the heroes,
+ * and you can 'jump fly', flappy bird style.
+ * <p>
+ * Add the JLayer1.0.1 library to the project to run the program and have
+ * music. In Intelijii: 1. File -> Project Structure 2. Library -> Add library
+ * -> jl1.0.1.jar -> Apply library 3. Make sure the SoundPlayer file is
+ * recognizing the library.
+ * <p>
+ * Sound effects, shooting animation, game over popup and Home Screen were
+ * added for the game as bonuses.
+ * <p>
+ * We also added an easter egg for the "Merci Robin", which is outlined in the
+ * enemy class.
  */
 
-
 public class FlappyEnemy {
-    private Enemy enemy; // Creating an enemy with default values
-    private WindowView view;
-
-    /**
-     * Constructs a FlappyEnemy instance with the specified Enemy and WindowView.
-     *
-     * @param e The enemy instance.
-     * @param v The window view instance.
-     */
-    public FlappyEnemy(Enemy e, WindowView v) {
-        this.enemy = e;
-        this.view = v;
-    }
-
-    /**
-     * The entry point of the FlappyEnemy application.
-     */
     public static void main(String[] args) {
-
-        // Controller of the application
-
-        // Launch the JavaFX application
-        WindowView.launch(WindowView.class, args);
-
+        Application.launch(WindowView.class, args);
     }
 }
+

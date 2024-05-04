@@ -1,4 +1,3 @@
-import javafx.animation.AnimationTimer;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -17,72 +16,53 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
- * The main class representing the game window view.
+ * This class represents the main window view of the game application. It
+ * handles the display of the menu screen, game screen, and game over screen,
+ * as well as various UI elements and interactions within these screens.
  */
 public class WindowView extends Application {
-    private Enemy enemy = new Enemy();
-    private boolean gameIsRunning = false;
-    private long lastTime = 0; // Variable for the animation
-
-    // Arraylist containing all the coins
-    private ArrayList<Coin> coins = new ArrayList<>();
-    private long lastCoinTime = 0;
-
-    // Arraylist containing all the heroes
-    private ArrayList<Character> heroes = new ArrayList<>();
-    private long lastHeroTime = 0;
-
-    // Counter for a new teleportation
-    double tankLastTeleportTime = 0;
-
-    private BorderPane rootGame;
     private BorderPane rootMenu;
+    private BorderPane rootGame;
     private Stage primaryStage;
     private Stage gameOverStage;
+    private Line redLine;
+    ImageView backgroundView1;
+    ImageView backgroundView2;
+    Image backgroundImage;
+    Label coinText;
+    Label lifeText;
+    private Controller controller;
 
     /**
-     * The entry point for the JavaFX application.
+     * Initializes the primary stage and sets up the menu screen.
      *
-     * @param primaryStage The primary stage for this application, onto which the application scene can be set.
+     * @param primaryStage The primary stage of the JavaFX application.
      */
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
+
         rootGame = new BorderPane();
         rootMenu = new BorderPane();
 
-        // Initialize the Game scene
-        Scene gameScene = new Scene(rootGame, 640, 440);
-        // Initialize the Menu scene
         Scene menuScene = new Scene(rootMenu, 640, 440);
 
-        // Set by default the menu Scene
-        primaryStage.setScene(menuScene);
-        primaryStage.show();
-        updateMusic();
-
-
-        // Load the background image for the Menu scene
         Image menuBackgroundImage = new Image("/assets/images/JokerBg.png");
         ImageView menuImageView = new ImageView(menuBackgroundImage);
-
         rootMenu.getChildren().add(menuImageView);
 
         VBox mainMenuBox = new VBox();
-        mainMenuBox.setPadding(new Insets(0,0,100,50));
+        mainMenuBox.setPadding(new Insets(0, 0, 100, 50));
         mainMenuBox.setAlignment(Pos.CENTER_LEFT);
 
         Label unoReverseTitle = new Label("UNO Reverse Flappy");
-        unoReverseTitle.setStyle("-fx-text-fill: #61355C; -fx-font-size: 30px;" +
+        unoReverseTitle.setStyle("-fx-text-fill: #61355C; -fx-font-size: " +
+                "30px;" +
                 " -fx-font-weight: bold");
         unoReverseTitle.setPadding(new Insets(0, 0, 100, 0));
-
 
         Button startButton = new Button("Start Game");
         startButton.setPadding(new Insets(10, 20, 10, 20));
@@ -91,23 +71,44 @@ public class WindowView extends Application {
                 "-fx-font-weight: bold");
         startButton.setMinWidth(120);
         startButton.setOnAction(e -> {
-            gameIsRunning = true;
-            primaryStage.setScene(gameScene);
-            updateMusic();
+            showGameScreen();
+            controller.startButtonClick();
         });
 
-        // Add the button and title to the mainMenuBox
         mainMenuBox.getChildren().addAll(unoReverseTitle, startButton);
-
-        // Add mainMenuBox to rootMenu
         rootMenu.setCenter(mainMenuBox);
 
+        rootMenu.setUserData(menuScene);
 
+        controller = new Controller(this);
+        controller.initializeGame();
 
+        primaryStage.setScene(menuScene);
+        primaryStage.show();
+    }
+
+    /**
+     * Displays the menu screen.
+     */
+    public void showMenuScreen() {
+        // Retrieve the scene from the member variable
+        Scene menuScene = (Scene) rootMenu.getUserData();
+
+        // Set the scene to the primary stage
+        primaryStage.setScene(menuScene);
+    }
+
+    /**
+     * Displays the game screen.
+     */
+    public void showGameScreen() {
+        rootGame = new BorderPane();
+        // Initialize the Game scene
+        Scene gameScene = new Scene(rootGame, 640, 440);
         // Load the background image for the game scene
-        Image backgroundImage = new Image("/assets/images/Bg.png");
-        ImageView backgroundView1 = new ImageView(backgroundImage);
-        ImageView backgroundView2 = new ImageView(backgroundImage);
+        backgroundImage = new Image("/assets/images/Bg.png");
+        backgroundView1 = new ImageView(backgroundImage);
+        backgroundView2 = new ImageView(backgroundImage);
         backgroundView2.setTranslateX(backgroundImage.getWidth());
 
 
@@ -127,19 +128,20 @@ public class WindowView extends Application {
         pauseButton.setMinWidth(75);
         pauseButton.setFocusTraversable(false);
         pauseButton.setOnAction(e -> {
-            gameIsRunning = !gameIsRunning;
-            enemy.setCanShoot(gameIsRunning);
-            pauseButton.setText(gameIsRunning ? "Pause" : "Resume");
+            controller.changeGameRunState();
+            pauseButton.setText(controller.getGameIsRunning() ? "Pause" :
+                    "Resume");
         });
 
         VBox pauseButtonBox = new VBox(pauseButton);
         pauseButtonBox.setPadding(new Insets(0, 10, 0, 10));
 
-        Label lifeText = new Label("Life: " + enemy.getHealth());
+        lifeText = new Label("Life: " + controller.getEnemyHealth());
         lifeText.setFont(Font.font("Arial", 16));
         lifeText.setPadding(new Insets(0, 10, 0, 10));
 
-        Label coinText = new Label("Coins:" + enemy.getCoinCollected());
+        coinText =
+                new Label("Coins:" + controller.getEnemyCoinCollected());
         coinText.setFont(Font.font("Arial", 16));
         coinText.setPadding(new Insets(0, 10, 0, 10));
 
@@ -148,272 +150,27 @@ public class WindowView extends Application {
                 new Separator(Orientation.VERTICAL), coinText);
         bottomGameInfo.setAlignment(Pos.CENTER);
         rootGame.setBottom(bottomGameInfo);
-
-
-        gameScene.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.SPACE) {
-                enemy.setJumping(true);
-            } else if (event.getCode() == KeyCode.E && enemy.getCanShoot()) {
-                enemy.attack();
-                enemy.setCanShoot(false);
-                Line redLine =
-                        new Line(enemy.getPositionX() + 2 * enemy.getRadius(),
-                                enemy.getPositionY() + enemy.getRadius(), 640,
-                                enemy.getPositionY() + enemy.getRadius());
-                redLine.setStroke(Color.RED);
-                redLine.setStrokeWidth(2);
-
-                if (!rootGame.getChildren().contains(redLine)) {
-                    rootGame.getChildren().add(redLine);
-                }
-
-                // Create a PauseTransition for a 0.05 second delay
-                PauseTransition pauseShoot =
-                        new PauseTransition(Duration.seconds(0.05));
-                pauseShoot.setOnFinished(e -> {
-                    // Remove the red line after the delay
-                    rootGame.getChildren().remove(redLine);
-                });
-
-                PauseTransition pauseCanShoot =
-                        new PauseTransition(Duration.seconds(1));
-                pauseCanShoot.setOnFinished(e -> {
-                    enemy.setCanShoot(true);
-                });
-
-                // Killing heroes
-                Iterator<Character> characterIterator = heroes.iterator();
-                while (characterIterator.hasNext()) {
-                    Character character = characterIterator.next();
-                    if (enemy.getPositionY() <= character.getPositionY() + character.getRadius() &&
-                            enemy.getPositionY() >= character.getPositionY() - character.getRadius()) {
-                        // Remove the hero from the game
-                        rootGame.getChildren().remove(character.getImageView());
-
-                        // Give the loot to the enemy
-                        enemy.setCoinCollected(character.getCoinDropAmount());
-                        coinText.setText("Coins: " + enemy.getCoinCollected());
-
-                        characterIterator.remove();
-                    }
-                }
-
-                // Start the PauseTransition
-                pauseShoot.play();
-                // Start the PauseTransition
-                pauseCanShoot.play();
-            }
-        });
-
-
         // X Position of the joker
-        enemy.getImageView().setTranslateX(enemy.getPositionX());
+        controller.getEnemyImageView().setTranslateX(controller.getEnemyPositionX());
 
-        rootGame.getChildren().add(enemy.getImageView());
+        rootGame.getChildren().add(controller.getEnemyImageView());
 
+        gameScene.setOnKeyPressed(event -> controller.handleKeyPress(event.getCode()));
+        // Set the scene to the primary stage
+        primaryStage.setScene(gameScene);
 
-        AnimationTimer timer = new AnimationTimer() {
-            double yOffset = 0; // For the sinusoidal movement of the
-            // furtive heroes
-
-            @Override
-            public void handle(long now) {
-                if (gameIsRunning) {
-                    if (lastTime != 0) {
-
-                        // Frame and speed calculations
-                        double deltaTime = (now - lastTime) / 1e9;
-                        double moveSpeedPerSecond = enemy.getHorizontalSpeed();
-                        double moveSpeedPerFrame =
-                                moveSpeedPerSecond * deltaTime;
-
-
-                        // Enemy jumping mechanic
-                        if (enemy.isJumping()) {
-                            enemy.jump();
-                            enemy.setJumping(false);
-                        }
-                        enemy.applyGravity(deltaTime);
-                        enemy.getImageView().setTranslateY(enemy.getPositionY());
-
-                        // Continuous background
-                        backgroundView1.setTranslateX(backgroundView1.getTranslateX() - moveSpeedPerFrame);
-                        backgroundView2.setTranslateX(backgroundView2.getTranslateX() - moveSpeedPerFrame);
-
-                        if (backgroundView1.getTranslateX() <= -backgroundImage.getWidth()) {
-                            backgroundView1.setTranslateX(backgroundView2.getTranslateX() + backgroundImage.getWidth());
-                        }
-                        if (backgroundView2.getTranslateX() <= -backgroundImage.getWidth()) {
-                            backgroundView2.setTranslateX(backgroundView1.getTranslateX() + backgroundImage.getWidth());
-                        }
-
-                        // Spawn a coin every 2 seconds, adding it to the
-                        // coins Arraylist
-                        if ((now - lastCoinTime) / 1e9 >= 2.0) {
-                            Coin coin = new Coin();
-                            // X Position of the coin
-                            coin.getImageView().setTranslateX(coin.getPositionX());
-                            // Y Position of the coin image
-                            coin.getImageView().setTranslateY(coin.getPositionY());
-                            rootGame.getChildren().add(coin.getImageView()); //
-                            // Add it to the rootGame
-
-                            coins.add(coin);
-                            lastCoinTime = now; // Update the last coin time
-                        }
-
-                        // Iterator to be able to remove coins from the
-                        // Arraylist, while cycling through all the coins
-                        Iterator<Coin> iterator = coins.iterator();
-                        while (iterator.hasNext()) {
-                            Coin coin = iterator.next();
-                            coin.setPositionX(coin.getPositionX() - moveSpeedPerFrame);
-                            coin.getImageView().setTranslateX(coin.getPositionX());
-
-                            // If the coin gets out of the screen to the
-                            // left, remove it from the ArrayList
-                            if (coin.getPositionX() + coin.getRadius() * 2 <= 0) {
-                                rootGame.getChildren().remove(coin.getImageView()); // Remove from the scene graph
-                                iterator.remove(); // Remove from the list
-                            }
-
-                            // If the enemy gets the coin, remove it from
-                            // the screen and add it to the coin counter
-                            // If the coins is in the enemy's hitbox :
-                            if (enemy.coinIntersect(coin)) {
-
-                                rootGame.getChildren().remove(coin.getImageView()); // Remove from the scene graph
-                                iterator.remove(); // Remove from the list
-
-                                // Add the coin to the counter and update it
-                                enemy.setCoinCollected(1);
-                                coinText.setText("Coins: " + enemy.getCoinCollected());
-                            }
-                        }
-
-                        // Spawns a Hero every 3 seconds, adding it to the
-                        // hero Arraylist
-
-                        if ((now - lastHeroTime) / 1e9 >= 3.0) {
-                            // Random number. If i == 0 => Melee. If i == 1
-                            // => Furtif. If i == 2 => Tank
-                            int randomHeroType =
-                                    (int) Math.floor((Math.random() * 3));
-
-                            if (randomHeroType == 0) {
-                                HeroMelee melee = new HeroMelee();
-                                // X position of the melee Hero
-                                melee.getImageView().setTranslateX(melee.getPositionX());
-                                // Y Position of the melee Hero
-                                melee.getImageView().setTranslateY(melee.getPositionY());
-                                rootGame.getChildren().add(melee.getImageView()); // Add it to the root
-
-                                heroes.add(melee);
-                            } else if (randomHeroType == 1) {
-                                HeroFurtif furtif = new HeroFurtif();
-
-                                // X position of the melee Hero
-                                furtif.getImageView().setTranslateX(furtif.getPositionX());
-                                // Y Position of the melee Hero
-                                furtif.getImageView().setTranslateY(furtif.getPositionY());
-                                rootGame.getChildren().add(furtif.getImageView()); // Add it to the root
-
-                                heroes.add(furtif);
-                            } else {
-                                HeroTank tank = new HeroTank();
-                                // X position of the melee Hero
-                                tank.getImageView().setTranslateX(tank.getPositionX());
-                                // Y Position of the melee Hero
-                                tank.getImageView().setTranslateY(tank.getPositionY());
-                                rootGame.getChildren().add(tank.getImageView()); // Add it to the rootGame
-
-                                heroes.add(tank);
-                            }
-
-                            lastHeroTime = now; // Update lastHeroTime
-
-                        }
-                        yOffset = 0.5 * Math.sin(now * 1e-9); // 50 pixels of amplitude
-
-
-                        Iterator<Character> characterIterator =
-                                heroes.iterator();
-
-                        while (characterIterator.hasNext()) {
-                            Character character = characterIterator.next();
-                            character.setPositionX(character.getPositionX() - moveSpeedPerFrame);
-                            character.getImageView().setTranslateX(character.getPositionX());
-
-                            // Sinusoidal movement for furtive heroes
-                            if (character instanceof HeroFurtif) {
-                                ((HeroFurtif) character).updatePosition(now);
-
-
-                            } else if (character instanceof HeroTank) {
-
-                                // If the elasped time is greater than
-                                // 500000000 ns = 0.5 seconds
-                                if ((now - tankLastTeleportTime) >= 500000000) {
-
-                                    ((HeroTank) character).updatePosition();
-                                    tankLastTeleportTime = now; // Update last teleportation time
-                                }
-                            }
-
-                            // If the Hero gets out of the screen to the left,
-                            // remove it from the ArrayList
-                            if (character.getPositionX() + character.getRadius() * 2 <= 0) {
-                                rootGame.getChildren().remove(character.getImageView()); // Remove from the scene graph
-                                characterIterator.remove(); // Remove from the list
-                            }
-
-                            // If the hero is in the enemy's hitbox
-                            if (enemy.characterIntersect(character)) {
-
-                                // If the hero is melee type, the enemy
-                                // looses all HP
-                                if (character instanceof HeroMelee) {
-                                    enemy.setHealth(-character.getAttackDamage());
-                                    lifeText.setText("Life: " + enemy.getHealth());
-
-                                } else if (character instanceof HeroFurtif) {
-                                    // Furtif type
-                                    enemy.setCoinCollected(-character.getCoinStealAmount());
-                                    coinText.setText("Coins: " + enemy.getCoinCollected());
-                                } else {
-                                    // Tank type
-                                    enemy.setHealth(-character.getAttackDamage());
-                                    lifeText.setText("Life: " + enemy.getHealth());
-                                }
-
-                                rootGame.getChildren().remove(character.getImageView()); // Remove from the scene graph
-                                characterIterator.remove(); // Remove from the list
-                            }
-                            // Check if the game should end
-                            if (!enemy.getIsAlive()) {
-                                gameIsRunning = false;
-                                SoundPlayer.playSound("src/assets" +
-                                        "/soundEffects" +
-                                        "/gameOverSound" +
-                                        ".mp3");
-                                showGameOverScreen();
-                                this.stop(); // Stop the animation timer
-                            }
-                        }
-                    }
-                    lastTime = now;
-                }
-            }
-        };
-        timer.start();
+        // Instantiation of the gun shot red line
+        redLine = new Line();
+        redLine.setStroke(Color.RED);
+        redLine.setStrokeWidth(2);
+        redLine.setVisible(false); // Initially invisible
+        rootGame.getChildren().add(redLine);
     }
 
     /**
-     * Show the game-over screen.
+     * Displays the game over screen.
      */
-    private void showGameOverScreen() {
-        gameIsRunning = false; // Stop the game loop or any other updates
-
+    public void showGameOverScreen() {
         Platform.runLater(() -> {
             VBox gameOverScreen = new VBox(20);
             gameOverScreen.setAlignment(Pos.CENTER);
@@ -425,7 +182,7 @@ public class WindowView extends Application {
 
             // Coin collected label
             Label coinCollectedLabel =
-                    new Label("You died collecting: " + enemy.getCoinCollected() + " coins!");
+                    new Label(controller.getGameOverMessage());
             coinCollectedLabel.setFont(Font.font("Arial", 18));
             coinCollectedLabel.setTextFill(Color.WHITE);
 
@@ -435,9 +192,7 @@ public class WindowView extends Application {
             backToMenuButton.setPrefHeight(50);
             backToMenuButton.setStyle("-fx-font-size: 15px;");
             backToMenuButton.setOnAction(e -> {
-                // Stop music when game is over
-                resetGame();
-                updateMusic();
+                controller.resetGame();
             });
 
             gameOverScreen.getChildren().addAll(gameOverLabel,
@@ -453,29 +208,81 @@ public class WindowView extends Application {
     }
 
     /**
-     * Reset the game.
+     * Updates the displayed coin count.
      */
-    private void resetGame() {
-        enemy.resetEnemyStats();
-        coins.clear();
-        heroes.clear();
-        rootGame.getChildren().clear();
-        start(primaryStage);
-
-        // Close the game over pop-up
-        if (gameOverStage != null) {
-            gameOverStage.close();
-        }
+    public void updateCoinText() {
+        coinText.setText("Coins:" + controller.getEnemyCoinCollected());
     }
 
     /**
-     * Update the game music.
+     * Updates the displayed health points.
      */
-    private void updateMusic() {
-        if (gameIsRunning) {
-            SoundPlayer.stopSound("src/assets/soundEffects/creepyMusic.mp3");
-        } else {
-            SoundPlayer.playSound("src/assets/soundEffects/creepyMusic.mp3");
+    public void updateLifeText() {
+        lifeText.setText("Life:" + controller.getEnemyHealth());
+    }
+
+
+    /**
+     * Retrieves the root node of the game scene.
+     *
+     * @return The root node (rootGame) of the game scene.
+     */
+    public BorderPane getRootGame() {
+        return rootGame;
+    }
+
+    /**
+     * Closes the game over popup window.
+     */
+    public void closeGameOverPopUp() {
+        gameOverStage.close();
+    }
+
+    /**
+     * Displays a visual representation of a gunshot.
+     */
+    public void gunShot() {
+        // Updates the position of the existing line
+        redLine.setStartX(controller.getEnemyPositionX() + 2 * controller.getEnemyRadius());
+        redLine.setEndX(640);
+        redLine.setStartY(controller.getEnemyPositionY() + controller.getEnemyRadius());
+        redLine.setEndY(controller.getEnemyPositionY() + controller.getEnemyRadius());
+        redLine.setVisible(true);
+        removeGunShotLineWithDelay();
+    }
+
+    /**
+     * Removes the visuale representation of a gunshot after a short delay.
+     */
+    public void removeGunShotLineWithDelay() {
+        PauseTransition delay = new PauseTransition(Duration.seconds(0.05));
+        delay.setOnFinished(e -> redLine.setVisible(false));
+        delay.play();
+    }
+
+    /**
+     * Removes the hero from the game scene.
+     */
+    public void removeHero() {
+        rootGame.getChildren().remove(controller.getHeroImageView());
+    }
+
+    /**
+     * Moves the background images to create a parallax effect.
+     *
+     * @param moveSpeedPerFrame The speed at which the background should move
+     *                          per frame.
+     */
+    public void moveBackground(double moveSpeedPerFrame) {
+
+        backgroundView1.setTranslateX(backgroundView1.getTranslateX() - moveSpeedPerFrame);
+        backgroundView2.setTranslateX(backgroundView2.getTranslateX() - moveSpeedPerFrame);
+
+        if (backgroundView1.getTranslateX() <= -backgroundImage.getWidth()) {
+            backgroundView1.setTranslateX(backgroundView2.getTranslateX() + backgroundImage.getWidth());
+        }
+        if (backgroundView2.getTranslateX() <= -backgroundImage.getWidth()) {
+            backgroundView2.setTranslateX(backgroundView1.getTranslateX() + backgroundImage.getWidth());
         }
     }
 }

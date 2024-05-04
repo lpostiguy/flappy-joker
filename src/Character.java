@@ -111,15 +111,6 @@ public abstract class Character {
     // Setters
 
     /**
-     * Sets whether the character is alive.
-     *
-     * @param value True if the character is alive, false otherwise.
-     */
-    public void setIsAlive(boolean value) {
-        isAlive = value;
-    }
-
-    /**
      * Sets the x-coordinate position of the character.
      *
      * @param positionX The x-coordinate position to set.
@@ -135,5 +126,14 @@ public abstract class Character {
      */
     public void setPositionY(double positionY) {
         this.positionY = positionY;
+    }
+
+    /**
+     * Sets the radius of the circle.
+     *
+     * @param radius the new radius value to set
+     */
+    public void setRadius(int radius) {
+        this.radius = radius;
     }
 }

@@ -5,6 +5,7 @@ import java.util.Random;
 
 /**
  * Represents a melee hero character in the game. Extends the Character class.
+ * This hero instantly kills the enemy
  */
 public class HeroMelee extends Character implements Hero {
 
@@ -32,8 +33,8 @@ public class HeroMelee extends Character implements Hero {
 
         // Set initial position
         this.positionX = 640 + getRadius();
-        this.positionY = setRandomPosition(360, getRadius()); // Y is
-        // randomized
+        // Y is randomized
+        this.positionY = setRandomPosition(360, getRadius());
     }
 
     // ************************************************************************
@@ -147,7 +148,8 @@ public class HeroMelee extends Character implements Hero {
      *
      * @param radius The radius to set.
      */
-    private void setRadius(int radius) {
+    @Override
+    public void setRadius(int radius) {
         this.radius = radius;
     }
 
@@ -180,7 +182,7 @@ public class HeroMelee extends Character implements Hero {
 
         int maxY = sceneSize - imageRadius;
 
-        // Generate random position Y within the calculated range
+        // Generates a random position Y within the calculated range
         return random.nextInt(maxY - imageRadius + 1) + imageRadius;
     }
 }

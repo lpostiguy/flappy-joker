@@ -1,10 +1,9 @@
 <component name="libraryTable">
   <library name="soundEffects">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/src/assets/jar_files" />
+      <root url="jar://$PROJECT_DIR$/JLayer1.0.1/jl1.0.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
-    <jarDirectory url="file://$PROJECT_DIR$/src/assets/jar_files" recursive="false" />
   </library>
 </component>

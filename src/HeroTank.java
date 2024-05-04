@@ -5,6 +5,7 @@ import java.util.Random;
 
 /**
  * Represents a tank hero character in the game. Extends the Character class.
+ * This hero removes half of the enemy's health (-50 health points)
  */
 public class HeroTank extends Character implements Hero {
 
@@ -143,7 +144,8 @@ public class HeroTank extends Character implements Hero {
      *
      * @param radius The radius to set.
      */
-    private void setRadius(int radius) {
+    @Override
+    public void setRadius(int radius) {
         this.radius = radius;
     }
 

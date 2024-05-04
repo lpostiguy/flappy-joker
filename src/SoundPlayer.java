@@ -9,10 +9,20 @@ import java.util.concurrent.ConcurrentHashMap;
  * Utility class for playing sound effects in the game.
  */
 public class SoundPlayer {
-    private static ConcurrentHashMap<String, AdvancedPlayer> players = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, AdvancedPlayer> players =
+            new ConcurrentHashMap<>();
 
+    /**
+     * Plays the sound effects located at the specified file path. If a
+     * sound is
+     * already playing from the same file path, it stops the previous sound and
+     * plays the new one.
+     *
+     * @param filePath The file path of the sound effect to be played.
+     */
     public static void playSound(final String filePath) {
-        stopSound(filePath); // Ensure previous sound is stopped before playing a new one
+        stopSound(filePath); // Ensure previous sound is stopped before
+        // playing a new one
         try {
             InputStream is = new FileInputStream(filePath);
             AdvancedPlayer player = new AdvancedPlayer(is);
@@ -36,15 +46,16 @@ public class SoundPlayer {
     }
 
     /**
-     * Plays the sound effect located at the specified file path.
-     * If a sound is already playing from the same file path, it stops the previous sound and plays the new one.
-     * @param filePath The file path of the sound effect to be played.
+     * Stops the sound effect that is currently playing from the specified file
+     * path.
+     *
+     * @param filePath The file path of the sound effect to be stopped.
      */
     public static void stopSound(String filePath) {
         AdvancedPlayer player = players.get(filePath);
         if (player != null) {
             try {
-                player.close(); // This should effectively stop the music playback
+                player.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -52,5 +63,3 @@ public class SoundPlayer {
         }
     }
 }
-
-

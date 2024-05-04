@@ -1,5 +1,5 @@
-import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 /**
  * Represents an Enemy character in the game. Extends the Character class.
@@ -16,7 +16,7 @@ public class Enemy extends Character {
     private int verticalSpeed = 0; // The vertical speed of the enemy
     private int gravityAcceleration = 170; // The gravity acceleration
     // applied to the enemy
-    private int startGravityAcceleration = 500; // The initial gravity
+    private final int startGravityAcceleration = 500; // The initial gravity
     // acceleration
     private double positionX; // The x-coordinate position of the enemy
     private double positionY; // The y-coordinate position of the enemy
@@ -204,7 +204,7 @@ public class Enemy extends Character {
      * @param coinCollected The number of coins collected.
      */
     public void setCoinCollected(int coinCollected) {
-        this.coinCollected += coinCollected;
+        this.coinCollected = coinCollected;
 
         if (coinCollected < 0) {
             // When removing coins. The speed and gravity not changed.
@@ -233,7 +233,7 @@ public class Enemy extends Character {
     }
 
     /**
-     * Sets the horizontal speed of the enemy.
+     * Sets the horizontale speed of the enemy.
      *
      * @param horizontalSpeed The horizontal speed to set.
      */
@@ -335,7 +335,7 @@ public class Enemy extends Character {
     /**
      * Makes the sound for the enemy attack.
      */
-    public void attack() {
+    public void attackSound() {
         SoundPlayer.playSound("src/assets/soundEffects/laserGunShotSound.mp3");
     }
 
@@ -359,27 +359,29 @@ public class Enemy extends Character {
      * Checks if the enemy intersects with another character.
      *
      * @param other The other character to check intersection with.
-     * @return True if this character intersects with the other character, false otherwise.
+     * @return True if this character intersects with the other character,
+     * false otherwise.
      */
-    public boolean characterIntersect ( Character other ){
+    public boolean characterIntersect(Character other) {
         double dx = this.positionX - other.getPositionX();
         double dy = this.positionY - other.getPositionY();
         double dSquare = dx * dx + dy * dy;
 
-        return dSquare < ( this.radius + other.getRadius() )*( this.radius + other.getRadius() );
+        return dSquare < (this.radius + other.getRadius()) * (this.radius + other.getRadius());
     }
 
     /**
      * Checks if the enemy intersects with a coin.
      *
      * @param coin The coin to check intersection with.
-     * @return True if this character intersects with the coin, false otherwise.
+     * @return True if this character intersects with the coin, false
+     * otherwise.
      */
-    public boolean coinIntersect ( Coin coin ){
+    public boolean coinIntersect(Coin coin) {
         double dx = this.positionX - coin.getPositionX();
         double dy = this.positionY - coin.getPositionY();
         double dSquare = dx * dx + dy * dy;
 
-        return dSquare < ( this.radius + coin.getRadius() )*( this.radius + coin.getRadius() );
+        return dSquare < (this.radius + coin.getRadius()) * (this.radius + coin.getRadius());
     }
 }
