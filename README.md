@@ -1,6 +1,6 @@
 # 🃏 Flappy Joker
 
-This is a side-scrolling action game inspired by Flappy Bird, where you play as the Joker. Your mission? Collect coins, avoid or shoot heroes, and cause chaos — all while flying through Gotham with style.
+This is a side-scrolling action game inspired by Flappy Bird, where you play as the Joker. Your mission? Collect coins, avoid or shoot heroes, and cause chaos, all while flying through Gotham with style.
 
 <img src="src/assets/images/game-preview-1.png" alt="Game Preview" width="500"/>
 
